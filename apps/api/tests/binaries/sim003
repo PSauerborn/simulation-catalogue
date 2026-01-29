@@ -1,0 +1,7 @@
+#!/bin/bash
+# Particle-in-Cell Simulation Binary (Mock)
+# This is a placeholder binary for testing purposes
+echo "Running Particle-in-Cell Simulation..."
+echo "Parameters: grid=256x256, particles=1e6, timesteps=10000"
+echo "Simulation complete."
+exit 0

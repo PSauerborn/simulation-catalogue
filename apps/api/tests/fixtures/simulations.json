@@ -1,0 +1,207 @@
+[
+  {
+    "id": "sim001",
+    "name": "Helical Motion Simulation",
+    "description": "Simulates the helical motion of charged particles in a uniform magnetic field with optional electric field perturbations.",
+    "parameters": [
+      {
+        "name": "magnetic_field",
+        "description": "Strength of the uniform magnetic field in Tesla",
+        "type": "float"
+      },
+      {
+        "name": "electric_field",
+        "description": "Strength of optional electric field perturbation in V/m",
+        "type": "float"
+      },
+      {
+        "name": "particle_charge",
+        "description": "Charge of the particle in Coulombs",
+        "type": "float"
+      },
+      {
+        "name": "particle_mass",
+        "description": "Mass of the particle in kg",
+        "type": "float"
+      },
+      {
+        "name": "timesteps",
+        "description": "Number of simulation timesteps",
+        "type": "int"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "trajectory",
+        "description": "3D trajectory of the particle over time",
+        "type": "trajectory"
+      }
+    ],
+    "created_at": "2026-01-15T10:30:00Z",
+    "updated_at": "2026-01-20T14:45:00Z"
+  },
+  {
+    "id": "sim002",
+    "name": "Cyclotron Resonance Model",
+    "description": "Models cyclotron resonance heating in tokamak plasmas using a kinetic approach.",
+    "parameters": [
+      {
+        "name": "resonance_frequency",
+        "description": "Target resonance frequency in Hz",
+        "type": "float"
+      },
+      {
+        "name": "plasma_density",
+        "description": "Plasma density in particles per cubic meter",
+        "type": "float"
+      },
+      {
+        "name": "heating_power",
+        "description": "Input heating power in Watts",
+        "type": "float"
+      },
+      {
+        "name": "radial_points",
+        "description": "Number of radial grid points",
+        "type": "int"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "power_deposition",
+        "description": "Radial profile of power deposition",
+        "type": "trajectory"
+      },
+      {
+        "name": "temperature_profile",
+        "description": "Radial temperature profile after heating",
+        "type": "trajectory"
+      }
+    ],
+    "created_at": "2026-01-10T08:00:00Z",
+    "updated_at": "2026-01-18T16:20:00Z"
+  },
+  {
+    "id": "sim003",
+    "name": "Particle-in-Cell Simulation",
+    "description": "A 2D particle-in-cell simulation for studying plasma wave interactions and instabilities.",
+    "parameters": [
+      {
+        "name": "grid_x",
+        "description": "Number of grid cells in x dimension",
+        "type": "int"
+      },
+      {
+        "name": "grid_y",
+        "description": "Number of grid cells in y dimension",
+        "type": "int"
+      },
+      {
+        "name": "particles",
+        "description": "Total number of simulation particles",
+        "type": "int"
+      },
+      {
+        "name": "timesteps",
+        "description": "Number of simulation timesteps",
+        "type": "int"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "density",
+        "description": "2D particle density field over time",
+        "type": "trajectory"
+      },
+      {
+        "name": "velocity",
+        "description": "2D velocity field distribution",
+        "type": "trajectory"
+      }
+    ],
+    "created_at": "2026-01-05T12:15:00Z",
+    "updated_at": "2026-01-25T09:30:00Z"
+  },
+  {
+    "id": "sim004",
+    "name": "Magnetic Field Mapping",
+    "description": "Calculates and visualizes the magnetic field distribution in complex coil geometries.",
+    "parameters": [
+      {
+        "name": "coil_count",
+        "description": "Number of coils in the geometry",
+        "type": "int"
+      },
+      {
+        "name": "current_amps",
+        "description": "Current flowing through each coil in Amperes",
+        "type": "float"
+      },
+      {
+        "name": "resolution_mm",
+        "description": "Spatial resolution of the field map in millimeters",
+        "type": "float"
+      },
+      {
+        "name": "domain_size_m",
+        "description": "Size of the computational domain in meters",
+        "type": "float"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "field_map",
+        "description": "3D magnetic field vector map",
+        "type": "trajectory"
+      }
+    ],
+    "created_at": "2026-01-12T15:00:00Z",
+    "updated_at": "2026-01-22T11:10:00Z"
+  },
+  {
+    "id": "sim005",
+    "name": "Heat Diffusion Model",
+    "description": "Solves the heat diffusion equation for thermal analysis of fusion reactor components.",
+    "parameters": [
+      {
+        "name": "thermal_conductivity",
+        "description": "Material thermal conductivity in W/(m·K)",
+        "type": "float"
+      },
+      {
+        "name": "initial_temperature",
+        "description": "Initial temperature of the component in Kelvin",
+        "type": "float"
+      },
+      {
+        "name": "boundary_temperature",
+        "description": "Fixed temperature at boundaries in Kelvin",
+        "type": "float"
+      },
+      {
+        "name": "simulation_time",
+        "description": "Total simulation time in seconds",
+        "type": "float"
+      },
+      {
+        "name": "use_adaptive_mesh",
+        "description": "Enable adaptive mesh refinement",
+        "type": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "temperature_field",
+        "description": "3D temperature distribution over time",
+        "type": "trajectory"
+      },
+      {
+        "name": "flux_distribution",
+        "description": "Heat flux distribution at boundaries",
+        "type": "trajectory"
+      }
+    ],
+    "created_at": "2026-01-08T09:45:00Z",
+    "updated_at": "2026-01-19T13:55:00Z"
+  }
+]

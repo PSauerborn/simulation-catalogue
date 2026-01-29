@@ -1,0 +1,56 @@
+[
+  {
+    "id": "key001",
+    "key": "sk_live_a1b2c3d4e5f6789012345678abcdef01",
+    "owner": "jsmith",
+    "expires_at": "2027-01-28T00:00:00Z",
+    "revoked": false,
+    "created_at": "2026-01-15T10:00:00Z",
+    "updated_at": "2026-01-15T10:00:00Z"
+  },
+  {
+    "id": "key002",
+    "key": "sk_test_b2c3d4e5f6789012345678abcdef01a2",
+    "owner": "agarcia",
+    "expires_at": "2027-06-15T00:00:00Z",
+    "revoked": false,
+    "created_at": "2026-01-10T08:30:00Z",
+    "updated_at": "2026-01-10T08:30:00Z"
+  },
+  {
+    "id": "key003",
+    "key": "sk_live_c3d4e5f6789012345678abcdef01a2b3",
+    "owner": "mwilson",
+    "expires_at": "2027-01-01T00:00:00Z",
+    "revoked": true,
+    "created_at": "2026-01-05T12:00:00Z",
+    "updated_at": "2026-01-20T14:00:00Z"
+  },
+  {
+    "id": "key004",
+    "key": "sk_live_d4e5f6789012345678abcdef01a2b3c4",
+    "owner": "klee",
+    "expires_at": "2026-01-01T00:00:00Z",
+    "revoked": false,
+    "created_at": "2025-06-01T09:00:00Z",
+    "updated_at": "2025-06-01T09:00:00Z"
+  },
+  {
+    "id": "key005",
+    "key": "sk_test_e5f6789012345678abcdef01a2b3c4d5",
+    "owner": "ci-bot",
+    "expires_at": "2027-12-31T23:59:59Z",
+    "revoked": false,
+    "created_at": "2026-01-22T16:45:00Z",
+    "updated_at": "2026-01-22T16:45:00Z"
+  },
+  {
+    "id": "key006",
+    "key": "a1b2c3d4e5f6789012345678abcdef01",
+    "owner": "expired-user",
+    "expires_at": "2026-01-01T00:00:00Z",
+    "revoked": false,
+    "created_at": "2025-06-01T09:00:00Z",
+    "updated_at": "2025-06-01T09:00:00Z"
+  }
+]
