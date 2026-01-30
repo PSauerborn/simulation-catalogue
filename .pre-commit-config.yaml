@@ -37,3 +37,12 @@ repos:
         language: system
         pass_filenames: false
         files: ^apps/api/
+
+  - repo: local
+    hooks:
+      - id: lint
+        name: Run Web Formatting & Linting
+        entry: make -C apps/web lint
+        language: system
+        pass_filenames: false
+        files: ^apps/web/

@@ -288,7 +288,9 @@ func TestRunSimulation(t *testing.T) {
 			Version: "v1",
 		}
 		db := NewMockDB(true)
-		events := &MockEventBroker{}
+
+		input := make(chan SimulationRunRequest, 1)
+		events := NewLocalEventBroker(input)
 
 		controller := NewController(cfg, db, events)
 		router := NewRouter(controller)
@@ -306,7 +308,7 @@ func TestRunSimulation(t *testing.T) {
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
 
 		initial := len(db.simulationRuns)
-		assert.Equal(t, 0, len(events.Events))
+		assert.Equal(t, 0, len(input))
 
 		router.ServeHTTP(response, request)
 		assert.Equal(t, http.StatusCreated, response.Code)
@@ -321,7 +323,7 @@ func TestRunSimulation(t *testing.T) {
 		final := len(db.simulationRuns)
 		assert.Equal(t, initial, final)
 
-		assert.Equal(t, 1, len(events.Events))
+		assert.Equal(t, 1, len(input))
 	})
 
 	t.Run("simulation not found", func(t *testing.T) {

@@ -21,6 +21,17 @@ func NewSimulationRunner(db Persistence) *SimulationRunner {
 	return &SimulationRunner{db: db}
 }
 
+func (r *SimulationRunner) ProcessEvent(event SimulationRunRequest) ([]byte, error) {
+	results, err := os.ReadFile("tests/archives/simulation_trajectories.zip")
+	if err != nil {
+		log.WithError(err).WithFields(log.Fields{
+			"client_id": event.ClientId,
+		}).Error("failed to read simulation results")
+		return nil, err
+	}
+	return results, nil
+}
+
 func (r *SimulationRunner) Start(events chan SimulationRunRequest) error {
 	for event := range events {
 		log.WithFields(log.Fields{
@@ -29,23 +40,26 @@ func (r *SimulationRunner) Start(events chan SimulationRunRequest) error {
 
 		start := time.Now()
 
-		time.Sleep(10 * time.Second)
+		var status string
 
-		duration := time.Since(start)
-
-		results, err := os.ReadFile("tests/archives/simulation_trajectories.zip")
+		output, err := r.ProcessEvent(event)
 		if err != nil {
 			log.WithError(err).WithFields(log.Fields{
 				"client_id": event.ClientId,
-			}).Error("failed to read simulation results")
-			continue
+			}).Error("failed to process simulation event")
+
+			status = "failed"
+		} else {
+			status = "completed"
 		}
 
-		if err := r.db.UpdateSimulationRun(event.ClientId, "completed", results); err != nil {
+		if err := r.db.UpdateSimulationRun(event.ClientId, status, output); err != nil {
 			log.WithError(err).WithFields(log.Fields{
 				"client_id": event.ClientId,
 			}).Error("failed to update simulation run")
 		}
+
+		duration := time.Since(start)
 
 		log.WithFields(log.Fields{
 			"client_id":        event.ClientId,

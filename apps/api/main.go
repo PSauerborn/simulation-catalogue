@@ -18,6 +18,9 @@ func NewRouter(cnt *Controller) *gin.Engine {
 	// add CORS middleware
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"*"},
+		ExposeHeaders:   []string{"*"},
 	}))
 
 	base := r.Group(fmt.Sprintf("/%s", cnt.config.Version))

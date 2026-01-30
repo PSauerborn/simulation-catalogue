@@ -33,6 +33,7 @@ const (
 	SimulationParameterTypeInt    ParameterTypeEnum = "int"
 	SimulationParameterTypeString ParameterTypeEnum = "string"
 	SimulationParameterTypeBool   ParameterTypeEnum = "bool"
+	SimulationParameterTypeVector ParameterTypeEnum = "vector"
 )
 
 // SimulationParameter defines an input parameter for a simulation,
