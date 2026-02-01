@@ -10,8 +10,14 @@ export const useClientStore = defineStore('client', () => {
   const isLoading = ref(false)
   const error = ref(null)
 
+  // SSR-safe localStorage check
+  const isClient = typeof window !== 'undefined'
+
   // Getters
-  const clientId = computed(() => client.value?.id || localStorage.getItem(CLIENT_ID_KEY))
+  const clientId = computed(() => {
+    if (client.value?.id) return client.value.id
+    return isClient ? localStorage.getItem(CLIENT_ID_KEY) : null
+  })
   const isReady = computed(() => isInitialized.value && !isLoading.value)
 
   // Setters
@@ -36,23 +42,27 @@ export const useClientStore = defineStore('client', () => {
   }
 
   function storeClientId(id) {
-    if (id) {
+    if (id && isClient) {
       localStorage.setItem(CLIENT_ID_KEY, id)
     }
   }
 
   function getStoredClientId() {
-    return localStorage.getItem(CLIENT_ID_KEY)
+    return isClient ? localStorage.getItem(CLIENT_ID_KEY) : null
   }
 
   function clearStoredClientId() {
-    localStorage.removeItem(CLIENT_ID_KEY)
+    if (isClient) {
+      localStorage.removeItem(CLIENT_ID_KEY)
+    }
   }
 
   function clearClient() {
     client.value = null
     isInitialized.value = false
-    localStorage.removeItem(CLIENT_ID_KEY)
+    if (isClient) {
+      localStorage.removeItem(CLIENT_ID_KEY)
+    }
   }
 
   return {

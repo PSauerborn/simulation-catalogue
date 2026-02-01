@@ -16,9 +16,12 @@ const api = axios.create({
 // Request interceptor to add client ID header
 api.interceptors.request.use(
   (config) => {
-    const clientId = localStorage.getItem('clientId')
-    if (clientId) {
-      config.headers['X-Client-Id'] = clientId
+    // SSR guard: localStorage is only available in browser
+    if (typeof window !== 'undefined') {
+      const clientId = localStorage.getItem('clientId')
+      if (clientId) {
+        config.headers['X-Client-Id'] = clientId
+      }
     }
     return config
   },

@@ -95,7 +95,6 @@
       v-model="showResults"
       :output-data="runOutput"
       :simulation-name="selectedSimulation?.name"
-      @download-zip="downloadZip"
     />
   </q-page>
 </template>
@@ -107,7 +106,7 @@ import { storeToRefs } from 'pinia'
 import SimulationCard from 'components/SimulationCard.vue'
 import SimulationRunner from 'components/SimulationRunner.vue'
 import ResultsViewer from 'components/ResultsViewer.vue'
-import { fetchSimulations, fetchRunOutput } from 'src/api'
+import { fetchSimulations } from 'src/api'
 
 const simulationStore = useSimulationStore()
 
@@ -139,26 +138,6 @@ function selectSimulation(simulation) {
 
 async function runSelectedSimulation(simulation) {
   selectSimulation(simulation)
-}
-
-async function downloadZip() {
-  try {
-    const response = await fetchRunOutput({
-      responseType: 'blob',
-    })
-
-    const blob = response.data
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `simulation_output_${Date.now()}.zip`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-  } catch (err) {
-    console.error('Download failed:', err)
-  }
 }
 
 async function loadSimulations() {
@@ -274,6 +253,16 @@ onMounted(async () => {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     padding: 4px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    padding: 0 12px;
+    gap: 12px;
+
+    .search-input {
+      max-width: none;
+    }
   }
 }
 
@@ -315,13 +304,19 @@ onMounted(async () => {
   margin: 0 auto;
   padding: 0 24px;
 
+  @media (max-width: 600px) {
+    padding: 0 12px;
+  }
+
   &.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    // Wider cards for desktop
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
     gap: 24px;
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
+      gap: 16px;
     }
   }
 

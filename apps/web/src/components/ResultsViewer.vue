@@ -119,20 +119,6 @@
 
       <!-- Footer Actions -->
       <q-card-actions class="dialog-footer">
-        <q-btn
-          outline
-          color="grey"
-          icon="eva-download-outline"
-          label="Download CSV"
-          @click="downloadCSV"
-        />
-        <q-btn
-          outline
-          color="grey"
-          icon="eva-archive-outline"
-          label="Download ZIP"
-          @click="$emit('downloadZip')"
-        />
         <q-space />
         <q-btn color="primary" label="Close" v-close-popup />
       </q-card-actions>
@@ -141,8 +127,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import Plotly from 'plotly.js-dist-min'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, shallowRef } from 'vue'
+
+// Plotly is browser-only - dynamically import on client
+const Plotly = shallowRef(null)
 
 const props = defineProps({
   modelValue: {
@@ -318,6 +306,9 @@ function createTableData(data) {
 }
 
 function createCharts() {
+  // SSR guard: Plotly only available on client
+  if (!Plotly.value) return
+
   destroyCharts()
 
   const commonLayout = {
@@ -340,7 +331,7 @@ function createCharts() {
 
   // Trajectory 3D
   if (trajectoryChartRef.value && chartData.value.x1?.length) {
-    Plotly.newPlot(
+    Plotly.value.newPlot(
       trajectoryChartRef.value,
       [
         {
@@ -382,7 +373,7 @@ function createCharts() {
 
   // X1 vs Time (Step)
   if (x1ChartRef.value && chartData.value.x1?.length) {
-    Plotly.newPlot(
+    Plotly.value.newPlot(
       x1ChartRef.value,
       [
         {
@@ -398,7 +389,7 @@ function createCharts() {
 
   // X2 vs Time (Step)
   if (x2ChartRef.value && chartData.value.x2?.length) {
-    Plotly.newPlot(
+    Plotly.value.newPlot(
       x2ChartRef.value,
       [
         {
@@ -414,7 +405,7 @@ function createCharts() {
 
   // X3 vs Time (Step)
   if (x3ChartRef.value && chartData.value.x3?.length) {
-    Plotly.newPlot(
+    Plotly.value.newPlot(
       x3ChartRef.value,
       [
         {
@@ -430,55 +421,42 @@ function createCharts() {
 }
 
 function destroyCharts() {
+  // SSR guard: Plotly only available on client
+  if (!Plotly.value) return
+
   if (trajectoryChartRef.value)
     try {
-      Plotly.purge(trajectoryChartRef.value)
+      Plotly.value.purge(trajectoryChartRef.value)
     } catch (e) {
       console.warn('Failed to purge trajectory chart', e)
     }
   if (x1ChartRef.value)
     try {
-      Plotly.purge(x1ChartRef.value)
+      Plotly.value.purge(x1ChartRef.value)
     } catch (e) {
       console.warn('Failed to purge x1 chart', e)
     }
   if (x2ChartRef.value)
     try {
-      Plotly.purge(x2ChartRef.value)
+      Plotly.value.purge(x2ChartRef.value)
     } catch (e) {
       console.warn('Failed to purge x2 chart', e)
     }
   if (x3ChartRef.value)
     try {
-      Plotly.purge(x3ChartRef.value)
+      Plotly.value.purge(x3ChartRef.value)
     } catch (e) {
       console.warn('Failed to purge x3 chart', e)
     }
 }
 
-function downloadCSV() {
-  const headers = ['x1', 'x2', 'x3'].filter((h) => chartData.value[h]?.length)
-  const rows = []
-
-  const length = Math.max(...headers.map((h) => chartData.value[h]?.length || 0))
-  for (let i = 0; i < length; i++) {
-    const row = headers.map((h) => chartData.value[h]?.[i] ?? '')
-    rows.push(row.join(','))
+onMounted(async () => {
+  // Dynamically import Plotly only on client side
+  if (typeof window !== 'undefined') {
+    const plotlyModule = await import('plotly.js-dist-min')
+    Plotly.value = plotlyModule.default
   }
 
-  const csvContent = [headers.join(','), ...rows].join('\n')
-  const blob = new Blob([csvContent], { type: 'text/csv' })
-  const url = window.URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `simulation_results_${Date.now()}.csv`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  window.URL.revokeObjectURL(url)
-}
-
-onMounted(() => {
   if (props.modelValue && props.outputData) {
     loadData()
   }

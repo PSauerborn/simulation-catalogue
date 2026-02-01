@@ -203,13 +203,6 @@
               <!-- Output Actions -->
               <div class="output-actions">
                 <q-btn
-                  outline
-                  color="primary"
-                  icon="eva-download-outline"
-                  label="Download ZIP"
-                  @click="downloadResults"
-                />
-                <q-btn
                   color="primary"
                   icon="eva-bar-chart-outline"
                   label="View Results"
@@ -416,27 +409,6 @@ async function loadRunOutput() {
   }
 }
 
-async function downloadResults() {
-  try {
-    // Always fetch fresh ZIP for download
-    const response = await fetchRunOutput({
-      responseType: 'blob',
-    })
-
-    const blob = response.data
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `simulation_output_${Date.now()}.zip`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-  } catch (err) {
-    console.error('Failed to download results:', err)
-  }
-}
-
 function clearRun() {
   stopPolling()
   simulationStore.clearCurrentRun()
@@ -516,11 +488,24 @@ const statusLabel = computed(() => {
 
 .runner-dialog {
   background: $dark;
-  min-width: 500px;
+  min-width: 0; // Allow shrinking on mobile
   max-width: 800px;
   width: 90vw;
+  max-height: 90vh;
   border-radius: $border-radius-xl;
   border: 1px solid $glass-border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; // Prevent content overflow
+
+  @media (max-width: 600px) {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh; // Use dynamic viewport height
+    max-height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
 }
 
 .runner-header {
@@ -560,7 +545,33 @@ const statusLabel = computed(() => {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
   }
+
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .runner-title-section {
+      flex: 1;
+      min-width: 0;
+
+      .runner-title-text {
+        .runner-title {
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+.runner-body {
+  overflow-y: auto;
+  overflow-x: hidden; // Prevent horizontal overflow
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0; // Allow flex child to shrink
+  padding-bottom: 24px; // Add safe space at bottom
 }
 
 .empty-state {
@@ -578,9 +589,22 @@ const statusLabel = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0; // Allow content to shrink
+  max-width: 100%; // Prevent overflow
+}
+
+.runner-description {
+  font-size: 0.95rem;
+  color: #a1a1a6;
+  margin: 0;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
 .parameters-form {
+  min-width: 0; // Allow form to shrink
+  max-width: 100%;
+
   .form-header {
     display: flex;
     justify-content: space-between;
@@ -598,11 +622,20 @@ const statusLabel = computed(() => {
 
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
+    min-width: 0; // Allow grid to shrink
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
   }
 
   .form-field {
+    min-width: 0; // Allow fields to shrink
+    max-width: 100%;
+
     .field-label {
       display: flex;
       align-items: center;
@@ -611,6 +644,7 @@ const statusLabel = computed(() => {
       font-weight: 500;
       color: #f5f5f7;
       margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
     .param-hint {
@@ -626,17 +660,43 @@ const statusLabel = computed(() => {
 
     .input-wrapper {
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
+
+      // Ensure Quasar inputs don't overflow
+      :deep(.q-field) {
+        max-width: 100%;
+      }
     }
 
     .vector-input {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+
       .vector-values {
         display: flex;
         flex-direction: row;
-        gap: 12px;
+        gap: 8px;
+        width: 100%;
 
         .vector-field {
           flex: 1;
-          min-width: 80px;
+          min-width: 0; // Critical: allow flex items to shrink below content size
+          max-width: 100%;
+
+          :deep(.q-field) {
+            max-width: 100%;
+          }
+        }
+
+        @media (max-width: 400px) {
+          flex-direction: column;
+          gap: 8px;
+
+          .vector-field {
+            min-width: 100%;
+          }
         }
       }
     }
@@ -650,6 +710,13 @@ const statusLabel = computed(() => {
     .run-button {
       padding: 12px 32px;
       font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+      .run-button {
+        width: 100%;
+        margin-top: 8px;
+      }
     }
   }
 }
@@ -702,6 +769,14 @@ const statusLabel = computed(() => {
       justify-content: center;
       gap: 12px;
       flex-wrap: wrap;
+
+      @media (max-width: 600px) {
+        width: 100%;
+
+        .q-btn {
+          width: 100%;
+        }
+      }
     }
   }
 }

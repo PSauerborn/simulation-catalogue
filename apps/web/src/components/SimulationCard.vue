@@ -142,6 +142,12 @@ function formatDate(dateString) {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  overflow: hidden; // Prevent content overflow
+
+  @media (max-width: 600px) {
+    padding: 16px;
+    gap: 16px;
+  }
 }
 
 .card-header {
@@ -164,10 +170,21 @@ function formatDate(dateString) {
     color: #a1a1a6;
     margin: 0;
     line-height: 1.5;
+    word-break: break-word; // Handle long words
   }
 
   .run-btn {
     flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .card-title {
+      font-size: 1.1rem;
+    }
+
+    .card-description {
+      font-size: 0.85rem;
+    }
   }
 }
 
@@ -188,12 +205,31 @@ function formatDate(dateString) {
   border: 1px solid $glass-border;
   border-radius: $border-radius-md;
   padding: 16px;
+  overflow: hidden; // Contain math equations
 
   .model-content {
     font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
     font-size: 0.85rem;
     color: #64d2ff;
     line-height: 1.8;
+    overflow-x: auto; // Allow horizontal scroll for wide equations
+    -webkit-overflow-scrolling: touch;
+
+    // Style KaTeX equations for mobile
+    :deep(.katex-display) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding: 4px 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 12px;
+
+    .model-content {
+      font-size: 0.75rem;
+    }
   }
 }
 
