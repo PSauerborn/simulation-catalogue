@@ -5,7 +5,7 @@
         <h3 class="card-title">{{ simulation.name }}</h3>
         <q-btn
           v-if="canRun"
-          icon="play_arrow"
+          icon="eva-arrow-right-outline"
           round
           size="sm"
           color="primary"
@@ -21,7 +21,7 @@
     <!-- Model Section -->
     <div class="model-section" v-if="modelDescription">
       <div class="section-label">
-        <q-icon name="functions" size="16px" />
+        <q-icon name="eva-hash-outline" size="16px" />
         <span>Mathematical Model</span>
       </div>
       <div class="model-content">
@@ -32,7 +32,7 @@
     <!-- Parameters Section -->
     <div class="parameters-section">
       <div class="section-label">
-        <q-icon name="tune" size="16px" />
+        <q-icon name="eva-options-2-outline" size="16px" />
         <span>Parameters ({{ simulation.parameters?.length || 0 }})</span>
       </div>
       <div class="parameters-list">
@@ -44,7 +44,7 @@
           <p class="param-description">{{ param.description }}</p>
         </div>
         <div v-if="hasMoreParameters" class="more-params">
-          <q-icon name="more_horiz" />
+          <q-icon name="eva-more-horizontal-outline" />
           <span>{{ remainingParameterCount }} more parameters</span>
         </div>
       </div>
@@ -53,7 +53,7 @@
     <!-- Outputs Section -->
     <div class="outputs-section" v-if="simulation.outputs?.length">
       <div class="section-label">
-        <q-icon name="analytics" size="16px" />
+        <q-icon name="eva-bar-chart-outline" size="16px" />
         <span>Outputs</span>
       </div>
       <div class="outputs-list">
@@ -83,6 +83,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
 
 const props = defineProps({
   simulation: {
@@ -102,36 +104,10 @@ const props = defineProps({
 defineEmits(['select', 'run'])
 
 // Compute a mathematical model description based on simulation type
+// Returns HTML string with rendered KaTeX formulas
 const modelDescription = computed(() => {
-  const name = props.simulation.name?.toLowerCase() || ''
-
-  if (name.includes('helical') || name.includes('magnetic')) {
-    return `
-      <strong>Lorentz Force:</strong> F = q(E + v × B)<br>
-      <strong>Equations of Motion:</strong><br>
-      m(dv/dt) = qE + q(v × B)
-    `
-  }
-
-  if (name.includes('pendulum')) {
-    return `
-      <strong>Simple Harmonic Motion:</strong><br>
-      θ'' + (g/L)sin(θ) = 0
-    `
-  }
-
-  if (name.includes('wave') || name.includes('oscillation')) {
-    return `
-      <strong>Wave Equation:</strong><br>
-      ∂²u/∂t² = c²∇²u
-    `
-  }
-
-  // Default physics model
-  return `
-    <strong>Numerical Integration:</strong><br>
-    Uses adaptive time-stepping algorithms
-  `
+  const options = { throwOnError: false, displayMode: true }
+  return katex.renderToString(props.simulation.model || '', options)
 })
 
 const displayedParameters = computed(() => {

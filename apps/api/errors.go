@@ -44,6 +44,8 @@ func (e ErrAPIKeyNotFound) Error() string {
 	return fmt.Sprintf("API key %s not found", e.Key)
 }
 
+// ErrClientNotInitialized is returned when a client session exists but
+// has not been properly initialized with required resources.
 type ErrClientNotInitialized struct {
 	ID string
 }

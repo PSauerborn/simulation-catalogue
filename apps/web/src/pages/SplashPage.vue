@@ -10,11 +10,6 @@
     <!-- Content -->
     <div class="splash-content">
       <!-- Logo/Icon -->
-      <div class="splash-logo">
-        <q-icon name="science" size="80px" class="logo-icon" />
-        <div class="logo-ring"></div>
-        <div class="logo-ring ring-2"></div>
-      </div>
 
       <!-- Title -->
       <h1 class="splash-title"><span class="gradient-text">Simulation</span> Catalogue</h1>
@@ -24,7 +19,7 @@
 
       <!-- Loading -->
       <div class="splash-loader" v-if="isLoading">
-        <q-spinner-dots size="40px" color="primary" />
+        <q-spinner size="40px" color="primary" />
         <p class="loader-text">{{ loadingMessage }}</p>
       </div>
 
@@ -38,7 +33,7 @@
 
     <!-- Footer -->
     <div class="splash-footer">
-      <p>Powered by Fortran & Quasar</p>
+      <p>Powered by Fortran, Go, Kubernetes & Vue</p>
     </div>
   </div>
 </template>

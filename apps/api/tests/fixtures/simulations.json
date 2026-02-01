@@ -7,12 +7,12 @@
       {
         "name": "magnetic_field",
         "description": "Strength of the uniform magnetic field in Tesla",
-        "type": "float"
+        "type": "vector"
       },
       {
         "name": "electric_field",
         "description": "Strength of optional electric field perturbation in V/m",
-        "type": "float"
+        "type": "vector"
       },
       {
         "name": "particle_charge",

@@ -10,13 +10,13 @@
       <q-card-section class="dialog-header">
         <div class="header-content">
           <div class="header-title">
-            <q-icon name="analytics" size="28px" color="primary" />
+            <q-icon name="eva-activity-outline" size="28px" color="primary" />
             <div>
               <h2>Simulation Results</h2>
               <p v-if="simulationName">{{ simulationName }}</p>
             </div>
           </div>
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn icon="eva-close-outline" flat round dense v-close-popup />
         </div>
 
         <q-tabs
@@ -46,7 +46,7 @@
 
         <!-- Error State -->
         <div v-else-if="error" class="error-state">
-          <q-icon name="error_outline" size="64px" color="negative" />
+          <q-icon name="eva-alert-circle-outline" size="64px" color="negative" />
           <p>{{ error }}</p>
           <q-btn outline color="primary" label="Retry" @click="loadData" />
         </div>
@@ -56,7 +56,7 @@
           <!-- Trajectory Chart -->
           <div v-if="hasTrajectoryData" class="chart-section">
             <h3 class="chart-title">
-              <q-icon name="timeline" size="20px" />
+              <q-icon name="eva-trending-up-outline" size="20px" />
               3D Trajectory
             </h3>
             <div class="chart-wrapper">
@@ -66,33 +66,33 @@
 
           <!-- Position vs Time Charts -->
           <div class="chart-grid">
-            <div v-if="chartData.x?.length" class="chart-section">
+            <div v-if="chartData.x1?.length" class="chart-section">
               <h3 class="chart-title">
-                <q-icon name="show_chart" size="18px" />
-                X Position vs Time
+                <q-icon name="eva-trending-up-outline" size="18px" />
+                X1 Evolution
               </h3>
               <div class="chart-wrapper">
-                <div ref="xChartRef" class="plotly-chart"></div>
+                <div ref="x1ChartRef" class="plotly-chart"></div>
               </div>
             </div>
 
-            <div v-if="chartData.y?.length" class="chart-section">
+            <div v-if="chartData.x2?.length" class="chart-section">
               <h3 class="chart-title">
-                <q-icon name="show_chart" size="18px" />
-                Y Position vs Time
+                <q-icon name="eva-trending-up-outline" size="18px" />
+                X2 Evolution
               </h3>
               <div class="chart-wrapper">
-                <div ref="yChartRef" class="plotly-chart"></div>
+                <div ref="x2ChartRef" class="plotly-chart"></div>
               </div>
             </div>
 
-            <div v-if="chartData.z?.length" class="chart-section">
+            <div v-if="chartData.x3?.length" class="chart-section">
               <h3 class="chart-title">
-                <q-icon name="show_chart" size="18px" />
-                Z Position vs Time
+                <q-icon name="eva-trending-up-outline" size="18px" />
+                X3 Evolution
               </h3>
               <div class="chart-wrapper">
-                <div ref="zChartRef" class="plotly-chart"></div>
+                <div ref="x3ChartRef" class="plotly-chart"></div>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@
           <!-- Data Table -->
           <div v-if="tableData.length" class="table-section">
             <h3 class="chart-title">
-              <q-icon name="table_chart" size="20px" />
+              <q-icon name="eva-grid-outline" size="20px" />
               Raw Data
             </h3>
             <q-table
@@ -119,11 +119,17 @@
 
       <!-- Footer Actions -->
       <q-card-actions class="dialog-footer">
-        <q-btn outline color="grey" icon="download" label="Download CSV" @click="downloadCSV" />
         <q-btn
           outline
           color="grey"
-          icon="archive"
+          icon="eva-download-outline"
+          label="Download CSV"
+          @click="downloadCSV"
+        />
+        <q-btn
+          outline
+          color="grey"
+          icon="eva-archive-outline"
           label="Download ZIP"
           @click="$emit('downloadZip')"
         />
@@ -167,7 +173,7 @@ const selectedFile = ref(null)
 
 const chartData = computed(() => {
   if (!selectedFile.value || !allDatasets.value[selectedFile.value]) {
-    return { t: [], x: [], y: [], z: [] }
+    return { x1: [], x2: [], x3: [] }
   }
   return allDatasets.value[selectedFile.value]
 })
@@ -176,29 +182,28 @@ const tableData = computed(() => createTableData(chartData.value))
 
 // Chart refs
 const trajectoryChartRef = ref(null)
-const xChartRef = ref(null)
-const yChartRef = ref(null)
-const zChartRef = ref(null)
+const x1ChartRef = ref(null)
+const x2ChartRef = ref(null)
+const x3ChartRef = ref(null)
 
 // Chart instances
 
 const hasTrajectoryData = computed(() => {
-  return chartData.value.x?.length > 0 && chartData.value.y?.length > 0
+  return chartData.value.x1?.length > 0 && chartData.value.x2?.length > 0
 })
 
 const tableColumns = computed(() => {
   const columns = []
-  if (chartData.value.t?.length) {
-    columns.push({ name: 't', label: 'Time (s)', field: 't', sortable: true, align: 'left' })
+  columns.push({ name: 'index', label: 'Step', field: 'index', sortable: true, align: 'left' })
+
+  if (chartData.value.x1?.length) {
+    columns.push({ name: 'x1', label: 'X1 (m)', field: 'x1', sortable: true, align: 'left' })
   }
-  if (chartData.value.x?.length) {
-    columns.push({ name: 'x', label: 'X (m)', field: 'x', sortable: true, align: 'left' })
+  if (chartData.value.x2?.length) {
+    columns.push({ name: 'x2', label: 'X2 (m)', field: 'x2', sortable: true, align: 'left' })
   }
-  if (chartData.value.y?.length) {
-    columns.push({ name: 'y', label: 'Y (m)', field: 'y', sortable: true, align: 'left' })
-  }
-  if (chartData.value.z?.length) {
-    columns.push({ name: 'z', label: 'Z (m)', field: 'z', sortable: true, align: 'left' })
+  if (chartData.value.x3?.length) {
+    columns.push({ name: 'x3', label: 'X3 (m)', field: 'x3', sortable: true, align: 'left' })
   }
   return columns
 })
@@ -252,7 +257,7 @@ async function loadData() {
 }
 
 function processJSONData(data) {
-  // Expected format: { output: { "filename.csv": [{time, x, y, z}, ...] } }
+  // Expected format: { output: { "filename.csv": [{x1, x2, x3}, ...] } }
   const output = data.output || data
   const datasets = {}
 
@@ -264,28 +269,27 @@ function processJSONData(data) {
       continue
     }
 
-    // Transform to chart format { t: [], x: [], y: [], z: [] }
-    const result = { t: [], x: [], y: [], z: [] }
+    // Transform to chart format { x1: [], x2: [], x3: [] }
+    const result = { x1: [], x2: [], x3: [] }
 
     for (const point of points) {
-      // Handle time/t
-      if (point.t !== undefined) result.t.push(Number(point.t))
-      else if (point.time !== undefined) result.t.push(Number(point.time))
+      // Handle x1 (compat with x)
+      if (point.x1 !== undefined) result.x1.push(Number(point.x1))
+      else if (point.x !== undefined) result.x1.push(Number(point.x))
+      else if (point.pos_x !== undefined) result.x1.push(Number(point.pos_x))
 
-      // Handle x
-      if (point.x !== undefined) result.x.push(Number(point.x))
-      else if (point.pos_x !== undefined) result.x.push(Number(point.pos_x))
+      // Handle x2 (compat with y)
+      if (point.x2 !== undefined) result.x2.push(Number(point.x2))
+      else if (point.y !== undefined) result.x2.push(Number(point.y))
+      else if (point.pos_y !== undefined) result.x2.push(Number(point.pos_y))
 
-      // Handle y
-      if (point.y !== undefined) result.y.push(Number(point.y))
-      else if (point.pos_y !== undefined) result.y.push(Number(point.pos_y))
-
-      // Handle z
-      if (point.z !== undefined) result.z.push(Number(point.z))
-      else if (point.pos_z !== undefined) result.z.push(Number(point.pos_z))
+      // Handle x3 (compat with z)
+      if (point.x3 !== undefined) result.x3.push(Number(point.x3))
+      else if (point.z !== undefined) result.x3.push(Number(point.z))
+      else if (point.pos_z !== undefined) result.x3.push(Number(point.pos_z))
     }
 
-    if (result.t.length > 0) {
+    if (result.x1.length > 0) {
       datasets[filename] = result
     }
   }
@@ -294,21 +298,19 @@ function processJSONData(data) {
 }
 
 function createTableData(data) {
-  const length = Math.max(data.t?.length || 0, data.x?.length || 0)
+  const length = data.x1?.length || 0
   const rows = []
 
   for (let i = 0; i < Math.min(length, 1000); i++) {
-    const t = Number(data.t?.[i])
-    const x = Number(data.x?.[i])
-    const y = Number(data.y?.[i])
-    const z = Number(data.z?.[i])
+    const x1 = Number(data.x1?.[i])
+    const x2 = Number(data.x2?.[i])
+    const x3 = Number(data.x3?.[i])
 
     rows.push({
       index: i,
-      t: !isNaN(t) ? t.toFixed(6) : '',
-      x: !isNaN(x) ? x.toFixed(6) : '',
-      y: !isNaN(y) ? y.toFixed(6) : '',
-      z: !isNaN(z) ? z.toFixed(6) : '',
+      x1: !isNaN(x1) ? x1.toFixed(6) : '',
+      x2: !isNaN(x2) ? x2.toFixed(6) : '',
+      x3: !isNaN(x3) ? x3.toFixed(6) : '',
     })
   }
 
@@ -337,14 +339,14 @@ function createCharts() {
   const commonConfig = { responsive: true, displayModeBar: false }
 
   // Trajectory 3D
-  if (trajectoryChartRef.value && chartData.value.x?.length) {
+  if (trajectoryChartRef.value && chartData.value.x1?.length) {
     Plotly.newPlot(
       trajectoryChartRef.value,
       [
         {
-          x: chartData.value.x,
-          y: chartData.value.y,
-          z: chartData.value.z,
+          x: chartData.value.x1,
+          y: chartData.value.x2,
+          z: chartData.value.x3,
           type: 'scatter3d',
           mode: 'lines',
           line: { color: '#0071e3', width: 4 },
@@ -357,17 +359,17 @@ function createCharts() {
         margin: { t: 0, r: 0, l: 0, b: 0 },
         scene: {
           xaxis: {
-            title: 'X',
+            title: 'X1',
             gridcolor: 'rgba(255, 255, 255, 0.1)',
             backgroundcolor: 'rgba(0,0,0,0)',
           },
           yaxis: {
-            title: 'Y',
+            title: 'X2',
             gridcolor: 'rgba(255, 255, 255, 0.1)',
             backgroundcolor: 'rgba(0,0,0,0)',
           },
           zaxis: {
-            title: 'Z',
+            title: 'X3',
             gridcolor: 'rgba(255, 255, 255, 0.1)',
             backgroundcolor: 'rgba(0,0,0,0)',
           },
@@ -378,14 +380,13 @@ function createCharts() {
     )
   }
 
-  // X vs Time
-  if (xChartRef.value && chartData.value.x?.length) {
+  // X1 vs Time (Step)
+  if (x1ChartRef.value && chartData.value.x1?.length) {
     Plotly.newPlot(
-      xChartRef.value,
+      x1ChartRef.value,
       [
         {
-          x: chartData.value.t,
-          y: chartData.value.x,
+          y: chartData.value.x1,
           mode: 'lines',
           line: { color: '#ff453a', width: 2 },
         },
@@ -395,14 +396,13 @@ function createCharts() {
     )
   }
 
-  // Y vs Time
-  if (yChartRef.value && chartData.value.y?.length) {
+  // X2 vs Time (Step)
+  if (x2ChartRef.value && chartData.value.x2?.length) {
     Plotly.newPlot(
-      yChartRef.value,
+      x2ChartRef.value,
       [
         {
-          x: chartData.value.t,
-          y: chartData.value.y,
+          y: chartData.value.x2,
           mode: 'lines',
           line: { color: '#30d158', width: 2 },
         },
@@ -412,14 +412,13 @@ function createCharts() {
     )
   }
 
-  // Z vs Time
-  if (zChartRef.value && chartData.value.z?.length) {
+  // X3 vs Time (Step)
+  if (x3ChartRef.value && chartData.value.x3?.length) {
     Plotly.newPlot(
-      zChartRef.value,
+      x3ChartRef.value,
       [
         {
-          x: chartData.value.t,
-          y: chartData.value.z,
+          y: chartData.value.x3,
           mode: 'lines',
           line: { color: '#5e5ce6', width: 2 },
         },
@@ -437,28 +436,28 @@ function destroyCharts() {
     } catch (e) {
       console.warn('Failed to purge trajectory chart', e)
     }
-  if (xChartRef.value)
+  if (x1ChartRef.value)
     try {
-      Plotly.purge(xChartRef.value)
+      Plotly.purge(x1ChartRef.value)
     } catch (e) {
-      console.warn('Failed to purge x chart', e)
+      console.warn('Failed to purge x1 chart', e)
     }
-  if (yChartRef.value)
+  if (x2ChartRef.value)
     try {
-      Plotly.purge(yChartRef.value)
+      Plotly.purge(x2ChartRef.value)
     } catch (e) {
-      console.warn('Failed to purge y chart', e)
+      console.warn('Failed to purge x2 chart', e)
     }
-  if (zChartRef.value)
+  if (x3ChartRef.value)
     try {
-      Plotly.purge(zChartRef.value)
+      Plotly.purge(x3ChartRef.value)
     } catch (e) {
-      console.warn('Failed to purge z chart', e)
+      console.warn('Failed to purge x3 chart', e)
     }
 }
 
 function downloadCSV() {
-  const headers = ['t', 'x', 'y', 'z'].filter((h) => chartData.value[h]?.length)
+  const headers = ['x1', 'x2', 'x3'].filter((h) => chartData.value[h]?.length)
   const rows = []
 
   const length = Math.max(...headers.map((h) => chartData.value[h]?.length || 0))

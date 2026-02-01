@@ -60,6 +60,7 @@ def upgrade() -> None:
         sa.Column('description', sa.Text, nullable=True),
         sa.Column('parameters', postgresql.JSONB, nullable=True),
         sa.Column('outputs', postgresql.JSONB, nullable=True),
+        sa.Column('model', sa.Text, nullable=True),
         sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
         schema='base',

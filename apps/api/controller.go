@@ -315,7 +315,7 @@ func (cnt *Controller) RunSimulation(c *gin.Context) JSONResponse {
 		"parameters":    request.Parameters,
 	}).Info("received request to run simulation")
 
-	_, err := cnt.db.GetSimulationMeta(request.SimulationId)
+	meta, err := cnt.db.GetSimulationMeta(request.SimulationId)
 
 	var errNotFound ErrSimulationNotFound
 	if err != nil && errors.As(err, &errNotFound) {
@@ -328,6 +328,24 @@ func (cnt *Controller) RunSimulation(c *gin.Context) JSONResponse {
 		log.WithError(err).Error("failed to get simulation meta")
 		return JSONResponse{Code: http.StatusInternalServerError, Body: gin.H{
 			"error": "Internal Server Error",
+		}}
+	}
+
+	errors := ValidateParameters(meta, request.Parameters)
+	for _, err := range errors {
+		log.WithError(err).Error("failed to validate parameter")
+	}
+
+	if len(errors) > 0 {
+		log.WithFields(log.Fields{
+			"client_id":     clientId,
+			"simulation_id": request.SimulationId,
+			"parameters":    request.Parameters,
+			"error_count":   len(errors),
+		}).Error("failed to validate parameters")
+
+		return JSONResponse{Code: http.StatusBadRequest, Body: gin.H{
+			"error": "Invalid parameters",
 		}}
 	}
 
@@ -392,7 +410,13 @@ func (cnt *Controller) CreateSimulation(c *gin.Context) JSONResponse {
 		}}
 	}
 
-	id, err := cnt.db.CreateSimulation(body.Name, body.Description, body.Parameters, body.Outputs)
+	id, err := cnt.db.CreateSimulation(
+		body.Name,
+		body.Description,
+		body.Model,
+		body.Parameters,
+		body.Outputs,
+	)
 	if err != nil {
 		log.WithError(err).Error("failed to create simulation")
 		return JSONResponse{Code: http.StatusInternalServerError, Body: gin.H{

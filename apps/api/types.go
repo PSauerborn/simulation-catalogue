@@ -42,6 +42,7 @@ type SimulationParameter struct {
 	Name        string            `json:"name"`
 	Description string            `json:"description"`
 	Type        ParameterTypeEnum `json:"type"`
+	Default     interface{}       `json:"default"`
 }
 
 // APIKey represents an authentication key for admin API access.
@@ -81,6 +82,7 @@ type SimulationMeta struct {
 	Id          string                `json:"id"`
 	Name        string                `json:"name"`
 	Description string                `json:"description"`
+	Model       string                `json:"model"`
 	Parameters  []SimulationParameter `json:"parameters"`
 	Outputs     []SimulationOutput    `json:"outputs"`
 	CreatedAt   time.Time             `json:"created_at"`
@@ -103,6 +105,7 @@ type SimulationRun struct {
 type NewSimulationRequest struct {
 	Name        string                `json:"name" binding:"required"`
 	Description string                `json:"description" binding:"required"`
+	Model       string                `json:"model" binding:"required"`
 	Parameters  []SimulationParameter `json:"parameters" binding:"required"`
 	Outputs     []SimulationOutput    `json:"outputs" binding:"required"`
 }
@@ -117,4 +120,14 @@ type PatchSimulationRequest struct {
 type RunSimulationRequest struct {
 	SimulationId string                 `json:"simulation_id" binding:"required"`
 	Parameters   map[string]interface{} `json:"parameters" binding:"required"`
+}
+
+// Events used by the event broker
+
+// SimulationRunEvent represents an event published when a simulation run is requested.
+// It contains all data needed to execute the simulation asynchronously.
+type SimulationRunEvent struct {
+	ClientId     string                 `json:"client_id"`
+	SimulationId string                 `json:"simulation_id"`
+	Parameters   map[string]interface{} `json:"parameters"`
 }

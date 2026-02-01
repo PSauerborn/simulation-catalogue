@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -97,7 +98,58 @@ func CSVFileToJson(csvData []byte) ([]map[string]interface{}, error) {
 	return result, nil
 }
 
+// GenerateId creates a new unique identifier by generating a UUID v4
+// and removing all hyphens, resulting in a 32-character hex string.
 func GenerateId() string {
 	id := uuid.New().String()
 	return strings.ReplaceAll(id, "-", "")
+}
+
+// ZipDirectory creates a zip archive containing all files in the source directory.
+// It recursively walks the directory tree and adds each file to the archive.
+// Returns the zip file contents as a byte slice.
+func ZipDirectory(source string) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	w := zip.NewWriter(buf)
+
+	err := filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+
+		relPath, err := filepath.Rel(source, path)
+		if err != nil {
+			return err
+		}
+
+		// zip always uses forward slashes
+		relPath = filepath.ToSlash(relPath)
+
+		f, err := w.Create(relPath)
+		if err != nil {
+			return err
+		}
+
+		srcFile, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer srcFile.Close()
+
+		_, err = io.Copy(f, srcFile)
+		return err
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := w.Close(); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
 }

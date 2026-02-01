@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config holds the application configuration values loaded from
+// environment variables or configuration files.
 type Config struct {
 	Port              int    `validate:"omitempty,min=1,max=65535"`
 	Version           string `validate:"required"`
@@ -18,6 +20,7 @@ type Config struct {
 	PostgresUser      string `validate:"required"`
 	PostgresPassword  string `validate:"required"`
 	MaxConcurrentRuns int    `validate:"omitempty,min=1"`
+	CPUArch           string `validate:"omitempty"`
 }
 
 // Validate checks the Config struct for required fields
@@ -67,6 +70,7 @@ func LoadConfig() *Config {
 		LogLevel:          viper.GetString("app.log_level"),
 		Port:              viper.GetInt("app.port"),
 		MaxConcurrentRuns: viper.GetInt("app.max_concurrent_runs"),
+		CPUArch:           viper.GetString("app.cpu_arch"),
 	}
 
 	if err := cfg.Validate(); err != nil {

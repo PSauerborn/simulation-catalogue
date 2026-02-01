@@ -1,0 +1,654 @@
+openapi: 3.0.3
+info:
+  title: Simulation Catalogue API
+  description: |
+    REST API for the Simulation Catalogue application. This API allows users to
+    browse available simulations, run them with custom parameters, and retrieve
+    results. Admin endpoints are available for managing simulations.
+  version: "1.0.0"
+  contact:
+    name: API Support
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Local development server
+
+tags:
+  - name: Public
+    description: Public endpoints accessible without authentication
+  - name: Client
+    description: Endpoints requiring client ID authentication
+  - name: Admin
+    description: Admin endpoints requiring API key authentication
+
+paths:
+  /public/version:
+    get:
+      tags:
+        - Public
+      summary: Get API version
+      description: Returns the current API version
+      operationId: getVersion
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: "v1"
+
+  /public/health:
+    get:
+      tags:
+        - Public
+      summary: Health check
+      description: Performs a health check on the database connection
+      operationId: healthCheck
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "OK"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/client:
+    get:
+      tags:
+        - Public
+      summary: Get client information
+      description: Retrieves client information based on the X-Client-Id header
+      operationId: getClient
+      parameters:
+        - $ref: "#/components/parameters/XClientId"
+      responses:
+        "200":
+          description: Client information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  client:
+                    $ref: "#/components/schemas/Client"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/client/init:
+    post:
+      tags:
+        - Public
+      summary: Initialize a new client
+      description: Creates a new client session and returns the generated client ID
+      operationId: initClient
+      responses:
+        "200":
+          description: Client initialized successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Generated client ID
+                    example: "abc123def456"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/simulations:
+    get:
+      tags:
+        - Public
+      summary: List all simulations
+      description: Returns a list of all available simulations with their metadata
+      operationId: listSimulations
+      responses:
+        "200":
+          description: List of simulations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SimulationMeta"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/simulations/{id}/meta:
+    get:
+      tags:
+        - Public
+      summary: Get simulation metadata
+      description: Retrieves the metadata for a specific simulation by ID
+      operationId: getSimulationMeta
+      parameters:
+        - $ref: "#/components/parameters/SimulationId"
+      responses:
+        "200":
+          description: Simulation metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationMeta"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/simulations/{id}/binary/{cpu_architecture}:
+    get:
+      tags:
+        - Public
+      summary: Download simulation binary
+      description: Downloads the compiled simulation binary for a specific CPU architecture
+      operationId: getSimulationBinary
+      parameters:
+        - $ref: "#/components/parameters/SimulationId"
+        - name: cpu_architecture
+          in: path
+          required: true
+          description: Target CPU architecture
+          schema:
+            type: string
+            enum:
+              - arm64
+              - amd64
+      responses:
+        "200":
+          description: Binary file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/simulations/run:
+    get:
+      tags:
+        - Client
+      summary: Get simulation run status
+      description: Retrieves the current simulation run status for the authenticated client
+      operationId: getSimulationRun
+      parameters:
+        - $ref: "#/components/parameters/XClientIdRequired"
+      responses:
+        "200":
+          description: Simulation run status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationRun"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+        - Client
+      summary: Run a simulation
+      description: Initiates a new simulation run with the specified parameters
+      operationId: runSimulation
+      parameters:
+        - $ref: "#/components/parameters/XClientIdRequired"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunSimulationRequest"
+      responses:
+        "201":
+          description: Simulation run created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Simulation run ID
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict - client already has an active simulation run
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /public/simulations/output:
+    get:
+      tags:
+        - Client
+      summary: Get simulation output
+      description: |
+        Retrieves the output of a completed simulation run.
+        Format can be specified via query parameter.
+      operationId: getSimulationOutput
+      parameters:
+        - $ref: "#/components/parameters/XClientIdRequired"
+        - name: format
+          in: query
+          required: false
+          description: Output format (json or zip)
+          schema:
+            type: string
+            enum:
+              - json
+              - zip
+            default: json
+      responses:
+        "200":
+          description: Simulation output
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/simulations:
+    post:
+      tags:
+        - Admin
+      summary: Create a new simulation
+      description: Creates a new simulation with the provided metadata, parameters, and outputs
+      operationId: createSimulation
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewSimulationRequest"
+      responses:
+        "201":
+          description: Simulation created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Created simulation ID
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/simulations/{id}/meta:
+    put:
+      tags:
+        - Admin
+      summary: Update simulation metadata
+      description: Updates the name and description of an existing simulation
+      operationId: updateSimulationMeta
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SimulationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchSimulationRequest"
+      responses:
+        "204":
+          description: Simulation updated successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/simulations/{id}/binary/{cpu_architecture}:
+    put:
+      tags:
+        - Admin
+      summary: Upload simulation binary
+      description: Uploads or updates the compiled binary for a simulation
+      operationId: updateSimulationBinary
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SimulationId"
+        - name: cpu_architecture
+          in: path
+          required: true
+          description: Target CPU architecture
+          schema:
+            type: string
+            enum:
+              - arm64
+              - amd64
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                binary:
+                  type: string
+                  format: binary
+                  description: The compiled simulation binary
+              required:
+                - binary
+      responses:
+        "204":
+          description: Binary uploaded successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /admin/simulations/{id}:
+    delete:
+      tags:
+        - Admin
+      summary: Delete a simulation
+      description: Permanently removes a simulation and all associated data
+      operationId: deleteSimulation
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SimulationId"
+      responses:
+        "204":
+          description: Simulation deleted successfully
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+      description: API key for admin authentication
+
+  parameters:
+    SimulationId:
+      name: id
+      in: path
+      required: true
+      description: Unique identifier of the simulation
+      schema:
+        type: string
+    XClientId:
+      name: X-Client-Id
+      in: header
+      required: false
+      description: Client session identifier
+      schema:
+        type: string
+    XClientIdRequired:
+      name: X-Client-Id
+      in: header
+      required: true
+      description: Client session identifier (required)
+      schema:
+        type: string
+
+  schemas:
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique client identifier
+        created_at:
+          type: string
+          format: date-time
+        last_active_at:
+          type: string
+          format: date-time
+      nullable: true
+
+    SimulationParameter:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          description: Parameter name
+          example: "initial_velocity"
+        description:
+          type: string
+          description: Human-readable description
+          example: "Initial velocity of the particle in m/s"
+        type:
+          type: string
+          enum:
+            - float
+            - int
+            - string
+            - bool
+            - vector
+          description: Data type of the parameter
+        default:
+          description: Default value for the parameter
+          oneOf:
+            - type: number
+            - type: integer
+            - type: string
+            - type: boolean
+            - type: array
+              items:
+                type: number
+
+    SimulationOutput:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          description: Output name
+          example: "trajectory"
+        description:
+          type: string
+          description: Human-readable description
+        type:
+          type: string
+          enum:
+            - trajectory
+          description: Output type
+
+    SimulationMeta:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique simulation identifier
+        name:
+          type: string
+          description: Simulation name
+          example: "Helical Motion Simulation"
+        description:
+          type: string
+          description: Detailed description of the simulation
+        model:
+          type: string
+          description: LaTeX representation of the mathematical model
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationParameter"
+        outputs:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationOutput"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SimulationRun:
+      type: object
+      properties:
+        client_id:
+          type: string
+        simulation_id:
+          type: string
+          nullable: true
+        parameters:
+          type: object
+          additionalProperties: true
+        status:
+          type: string
+          enum:
+            - pending
+            - running
+            - completed
+            - failed
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    RunSimulationRequest:
+      type: object
+      required:
+        - simulation_id
+        - parameters
+      properties:
+        simulation_id:
+          type: string
+          description: ID of the simulation to run
+        parameters:
+          type: object
+          additionalProperties: true
+          description: Parameter values for the simulation run
+
+    NewSimulationRequest:
+      type: object
+      required:
+        - name
+        - description
+        - model
+        - parameters
+        - outputs
+      properties:
+        name:
+          type: string
+          description: Simulation name
+        description:
+          type: string
+          description: Simulation description
+        model:
+          type: string
+          description: LaTeX representation of the mathematical model
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationParameter"
+        outputs:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationOutput"
+
+    PatchSimulationRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          description: Updated simulation name
+        description:
+          type: string
+          description: Updated simulation description
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized - missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

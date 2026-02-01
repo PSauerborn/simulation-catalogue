@@ -35,10 +35,11 @@ type Persistence interface {
 	GetSimulationRun(clientId string) (SimulationRun, error)
 	// CreateSimulationRun creates a new simulation run with the specified parameters.
 	CreateSimulationRun(clientId string, simulationId string, parameters map[string]interface{}) (string, error)
+	// UpdateSimulationRun updates the status and output of a simulation run.
 	UpdateSimulationRun(clientId string, status string, output []byte) error
 
 	// CreateSimulation creates a new simulation with the provided metadata.
-	CreateSimulation(name, description string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error)
+	CreateSimulation(name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error)
 	// UpdateSimulationMeta updates the name and description of a simulation.
 	UpdateSimulationMeta(id string, name, description string) error
 	// UpdateSimulationBinary uploads or updates a simulation binary for a CPU architecture.
@@ -143,7 +144,7 @@ func (p *PostgresDB) UpdateClientLastActive(id string) error {
 func (p *PostgresDB) ListSimulations() ([]SimulationMeta, error) {
 	simulations := make([]SimulationMeta, 0)
 
-	query := "SELECT id, name, description, parameters, outputs, created_at, updated_at FROM base.simulation_meta"
+	query := "SELECT id, name, description, model, parameters, outputs, created_at, updated_at FROM base.simulation_meta"
 	rows, err := p.pool.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
@@ -157,6 +158,7 @@ func (p *PostgresDB) ListSimulations() ([]SimulationMeta, error) {
 			&simulation.Id,
 			&simulation.Name,
 			&simulation.Description,
+			&simulation.Model,
 			&simulation.Parameters,
 			&simulation.Outputs,
 			&simulation.CreatedAt,
@@ -173,7 +175,7 @@ func (p *PostgresDB) ListSimulations() ([]SimulationMeta, error) {
 
 // GetSimulationMeta retrieves the metadata for a specific simulation by ID.
 func (p *PostgresDB) GetSimulationMeta(id string) (SimulationMeta, error) {
-	query := "SELECT id, name, description, parameters, outputs, created_at, updated_at FROM base.simulation_meta WHERE id = $1"
+	query := "SELECT id, name, description, model, parameters, outputs, created_at, updated_at FROM base.simulation_meta WHERE id = $1"
 	row := p.pool.QueryRow(context.Background(), query, id)
 
 	var simulation SimulationMeta
@@ -181,6 +183,7 @@ func (p *PostgresDB) GetSimulationMeta(id string) (SimulationMeta, error) {
 		&simulation.Id,
 		&simulation.Name,
 		&simulation.Description,
+		&simulation.Model,
 		&simulation.Parameters,
 		&simulation.Outputs,
 		&simulation.CreatedAt,
@@ -195,7 +198,6 @@ func (p *PostgresDB) GetSimulationMeta(id string) (SimulationMeta, error) {
 			return SimulationMeta{}, err
 		}
 	}
-
 	return simulation, nil
 }
 
@@ -276,6 +278,8 @@ func (p *PostgresDB) CreateSimulationRun(clientId string, simulationId string, p
 	return "", nil
 }
 
+// UpdateSimulationRun updates the status and output of a simulation run.
+// If output is non-nil, it also updates the simulation output blob.
 func (p *PostgresDB) UpdateSimulationRun(clientId string, status string, output []byte) error {
 	tx, err := p.pool.Begin(context.Background())
 	if err != nil {
@@ -309,7 +313,7 @@ func (p *PostgresDB) UpdateSimulationRun(clientId string, status string, output 
 }
 
 // CreateSimulation creates a new simulation with the provided metadata, parameters, and outputs.
-func (p *PostgresDB) CreateSimulation(name, description string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error) {
+func (p *PostgresDB) CreateSimulation(name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error) {
 	id := GenerateId()
 	ts := time.Now().UTC()
 
@@ -324,7 +328,7 @@ func (p *PostgresDB) CreateSimulation(name, description string, parameters []Sim
 		}
 	}()
 
-	query := "INSERT INTO base.simulation_meta (id, name, description, parameters, outputs, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $6)"
+	query := "INSERT INTO base.simulation_meta (id, name, description, model, parameters, outputs, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $7)"
 
 	_, err = tx.Exec(
 		context.Background(),
@@ -332,6 +336,7 @@ func (p *PostgresDB) CreateSimulation(name, description string, parameters []Sim
 		id,
 		name,
 		description,
+		model,
 		parameters,
 		outputs,
 		ts,

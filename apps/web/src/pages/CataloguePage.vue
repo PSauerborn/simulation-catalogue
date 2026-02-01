@@ -12,10 +12,6 @@
             <span class="stat-value">{{ simulations.length }}</span>
             <span class="stat-label">Simulations</span>
           </div>
-          <div class="stat-item" v-if="clientId">
-            <q-icon name="verified_user" size="20px" color="positive" />
-            <span class="stat-label">Connected</span>
-          </div>
         </div>
       </div>
     </header>
@@ -38,10 +34,10 @@
         class="search-input"
       >
         <template #prepend>
-          <q-icon name="search" color="grey" />
+          <q-icon name="eva-search-outline" color="grey" />
         </template>
         <template #append v-if="searchQuery">
-          <q-icon name="close" @click="searchQuery = ''" class="cursor-pointer" />
+          <q-icon name="eva-close-outline" @click="searchQuery = ''" class="cursor-pointer" />
         </template>
       </q-input>
 
@@ -57,10 +53,10 @@
         class="view-toggle"
       >
         <template #grid>
-          <q-icon name="grid_view" />
+          <q-icon name="eva-grid-outline" />
         </template>
         <template #list>
-          <q-icon name="list" />
+          <q-icon name="eva-list-outline" />
         </template>
       </q-btn-toggle>
     </div>
@@ -73,7 +69,7 @@
 
     <!-- Empty State -->
     <div v-else-if="filteredSimulations.length === 0" class="empty-state">
-      <q-icon name="science" size="80px" color="grey-6" />
+      <q-icon name="eva-flask-outline" size="80px" color="grey-6" />
       <h3>No Simulations Found</h3>
       <p v-if="searchQuery">No simulations match "{{ searchQuery }}". Try a different search.</p>
       <p v-else>No simulations are available at this time.</p>
@@ -107,7 +103,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useSimulationStore } from 'stores/simulation-store'
-import { useClientStore } from 'stores/client-store'
 import { storeToRefs } from 'pinia'
 import SimulationCard from 'components/SimulationCard.vue'
 import SimulationRunner from 'components/SimulationRunner.vue'
@@ -115,10 +110,8 @@ import ResultsViewer from 'components/ResultsViewer.vue'
 import { fetchSimulations, fetchRunOutput } from 'src/api'
 
 const simulationStore = useSimulationStore()
-const clientStore = useClientStore()
 
 const { simulations, isLoadingSimulations, canRun, runOutput } = storeToRefs(simulationStore)
-const { clientId } = storeToRefs(clientStore)
 
 const searchQuery = ref('')
 const viewMode = ref('grid')

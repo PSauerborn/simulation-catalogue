@@ -1,18 +1,47 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <!-- Header -->
-    <q-header class="app-header">
+    <q-header class="app-header q-pa-sm">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleDrawer" class="lt-md" />
+        <q-btn
+          flat
+          dense
+          round
+          icon="eva-menu-outline"
+          aria-label="Menu"
+          @click="toggleDrawer"
+          class="lt-md"
+        />
 
         <q-toolbar-title class="toolbar-title">
           <router-link to="/catalogue" class="logo-link">
-            <q-icon name="science" size="28px" class="logo-icon" />
             <span class="logo-text">Simulation <span class="gradient-text">Catalogue</span></span>
           </router-link>
         </q-toolbar-title>
 
         <q-space />
+
+        <!-- Desktop Links -->
+        <div class="gt-sm row q-gutter-sm q-mr-md">
+          <q-btn
+            flat
+            round
+            icon="eva-github-outline"
+            href="https://github.com/psauerborn/simulation-catalogue"
+            target="_blank"
+          >
+            <q-tooltip>App Source Code</q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            icon="eva-cube-outline"
+            href="https://github.com/psauerborn/simulations"
+            target="_blank"
+          >
+            <q-tooltip>Simulation Source Code</q-tooltip>
+          </q-btn>
+        </div>
 
         <!-- Status Indicator -->
         <div class="status-indicator" v-if="clientId">
@@ -21,7 +50,7 @@
         </div>
 
         <!-- Client Info -->
-        <q-btn flat round icon="person" class="gt-sm">
+        <q-btn flat round icon="eva-person-outline" class="gt-sm">
           <q-tooltip>Client: {{ clientIdShort }}</q-tooltip>
         </q-btn>
       </q-toolbar>
@@ -34,7 +63,7 @@
 
         <q-item clickable v-ripple to="/catalogue" active-class="nav-active">
           <q-item-section avatar>
-            <q-icon name="grid_view" />
+            <q-icon name="eva-grid-outline" />
           </q-item-section>
           <q-item-section>Catalogue</q-item-section>
         </q-item>
@@ -43,23 +72,38 @@
 
         <q-item-label header class="drawer-header"> Resources </q-item-label>
 
-        <q-item clickable v-ripple href="https://github.com" target="_blank">
+        <q-item
+          clickable
+          v-ripple
+          href="https://github.com/psauerborn/simulation-catalogue"
+          target="_blank"
+        >
           <q-item-section avatar>
-            <q-icon name="code" />
+            <q-icon name="eva-github-outline" />
           </q-item-section>
-          <q-item-section>Source Code</q-item-section>
+          <q-item-section>App Source Code</q-item-section>
           <q-item-section side>
-            <q-icon name="open_in_new" size="16px" />
+            <q-icon name="eva-external-link-outline" size="16px" />
+          </q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple href="https://github.com/psauerborn/simulations" target="_blank">
+          <q-item-section avatar>
+            <q-icon name="eva-cube-outline" />
+          </q-item-section>
+          <q-item-section>Simulation Source Code</q-item-section>
+          <q-item-section side>
+            <q-icon name="eva-external-link-outline" size="16px" />
           </q-item-section>
         </q-item>
 
         <q-item clickable v-ripple href="https://fortran-lang.org" target="_blank">
           <q-item-section avatar>
-            <q-icon name="school" />
+            <q-icon name="eva-book-open-outline" />
           </q-item-section>
           <q-item-section>Fortran Docs</q-item-section>
           <q-item-section side>
-            <q-icon name="open_in_new" size="16px" />
+            <q-icon name="eva-external-link-outline" size="16px" />
           </q-item-section>
         </q-item>
       </q-list>

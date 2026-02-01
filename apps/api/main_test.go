@@ -289,16 +289,20 @@ func TestRunSimulation(t *testing.T) {
 		}
 		db := NewMockDB(true)
 
-		input := make(chan SimulationRunRequest, 1)
+		input := make(chan SimulationRunEvent, 1)
 		events := NewLocalEventBroker(input)
 
 		controller := NewController(cfg, db, events)
 		router := NewRouter(controller)
 
-		encoded, _ := json.Marshal(map[string]interface{}{
-			"simulation_id": "sim001",
-			"parameters": map[string]interface{}{
-				"a": "1",
+		encoded, _ := json.Marshal(RunSimulationRequest{
+			SimulationId: "sim001",
+			Parameters: map[string]interface{}{
+				"magnetic_field":  []float64{1.0, 0.0, 0.0},
+				"electric_field":  []float64{1.0, 0.0, 0.0},
+				"particle_charge": 1.0,
+				"particle_mass":   1.0,
+				"timesteps":       1000,
 			},
 		})
 
@@ -393,10 +397,14 @@ func TestRunSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		encoded, _ := json.Marshal(map[string]interface{}{
-			"simulation_id": "sim001",
-			"parameters": map[string]interface{}{
-				"a": "1",
+		encoded, _ := json.Marshal(RunSimulationRequest{
+			SimulationId: "sim001",
+			Parameters: map[string]interface{}{
+				"magnetic_field":  []float64{1.0, 0.0, 0.0},
+				"electric_field":  []float64{1.0, 0.0, 0.0},
+				"particle_charge": 1.0,
+				"particle_mass":   1.0,
+				"timesteps":       1000,
 			},
 		})
 
@@ -737,6 +745,7 @@ func TestCreateSimulation(t *testing.T) {
 					Type:        OutputTypeTrajectory,
 				},
 			},
+			Model: "bose_hubbard with some latex: $\\alpha$",
 		})
 
 		_, exists := db.SimulationsByName()["Bose Hubbard Model"]

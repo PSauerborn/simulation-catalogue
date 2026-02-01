@@ -124,11 +124,11 @@ func main() {
 	}
 	defer db.pool.Close()
 
-	events := make(chan SimulationRunRequest, config.MaxConcurrentRuns)
+	events := make(chan SimulationRunEvent, config.MaxConcurrentRuns)
 
 	for i := 0; i < config.MaxConcurrentRuns; i++ {
 		go func() {
-			runner := NewSimulationRunner(db)
+			runner := NewSimulationRunner(db, config)
 			if err := runner.Start(events); err != nil {
 				log.WithError(err).Error("failed to start runner")
 			}

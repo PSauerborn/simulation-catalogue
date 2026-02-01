@@ -10,7 +10,7 @@
       <!-- Header -->
       <q-card-section class="runner-header">
         <div class="runner-title-section">
-          <q-icon name="terminal" size="24px" class="terminal-icon" />
+          <q-icon name="eva-monitor-outline" size="24px" class="terminal-icon" />
           <div class="runner-title-text">
             <h3 class="runner-title">Simulation Runner</h3>
             <p class="runner-subtitle" v-if="selectedSimulation">
@@ -22,7 +22,14 @@
           <span :class="['status-badge', currentStatus]">
             {{ statusLabel }}
           </span>
-          <q-btn v-if="!hasActiveRun" icon="close" flat round dense @click="closeDialog" />
+          <q-btn
+            v-if="!hasActiveRun"
+            icon="eva-close-outline"
+            flat
+            round
+            dense
+            @click="closeDialog"
+          />
         </div>
       </q-card-section>
 
@@ -30,7 +37,7 @@
       <q-card-section class="runner-body">
         <!-- No Simulation Selected -->
         <div v-if="!selectedSimulation" class="empty-state">
-          <q-icon name="science" size="64px" color="grey-6" />
+          <q-icon name="eva-flask-outline" size="64px" color="grey-6" />
           <p>Select a simulation from the catalogue below to configure and run it.</p>
         </div>
 
@@ -138,7 +145,7 @@
               <q-btn
                 class="run-button"
                 color="primary"
-                icon="play_arrow"
+                icon="eva-arrow-right-outline"
                 label="Run Simulation"
                 :loading="isRunning"
                 :disable="!canRunSimulation"
@@ -148,9 +155,15 @@
 
             <!-- Error Banner (for API errors like 409) -->
             <div v-if="error" class="error-banner">
-              <q-icon name="warning" size="20px" color="negative" />
+              <q-icon name="eva-alert-triangle-outline" size="20px" color="negative" />
               <span>{{ error }}</span>
-              <q-btn flat dense size="sm" icon="close" @click="simulationStore.clearError()" />
+              <q-btn
+                flat
+                dense
+                size="sm"
+                icon="eva-close-outline"
+                @click="simulationStore.clearError()"
+              />
             </div>
           </div>
 
@@ -162,9 +175,10 @@
                 v-if="!hasActiveRun"
                 flat
                 dense
-                size="sm"
+                size="md"
                 color="grey"
-                label="Clear"
+                icon="eva-refresh-outline"
+                label="Reset"
                 @click="clearRun"
               />
             </div>
@@ -183,7 +197,7 @@
 
             <!-- Completed Status -->
             <div v-else-if="currentRun?.status === 'completed'" class="completed-section">
-              <q-icon name="check_circle" size="48px" color="positive" />
+              <q-icon name="eva-checkmark-circle-2-outline" size="48px" color="positive" />
               <p class="completed-text">Simulation completed successfully</p>
 
               <!-- Output Actions -->
@@ -191,13 +205,13 @@
                 <q-btn
                   outline
                   color="primary"
-                  icon="download"
+                  icon="eva-download-outline"
                   label="Download ZIP"
                   @click="downloadResults"
                 />
                 <q-btn
                   color="primary"
-                  icon="bar_chart"
+                  icon="eva-bar-chart-outline"
                   label="View Results"
                   @click="$emit('viewResults')"
                 />
@@ -206,7 +220,7 @@
 
             <!-- Failed Status -->
             <div v-else-if="currentRun?.status === 'failed'" class="failed-section">
-              <q-icon name="error" size="48px" color="negative" />
+              <q-icon name="eva-alert-circle-outline" size="48px" color="negative" />
               <p class="failed-text">Simulation failed</p>
               <p class="error-message">{{ error }}</p>
             </div>
@@ -277,6 +291,18 @@ watch(
 function initializeParameters(simulation) {
   const values = {}
   for (const param of simulation.parameters || []) {
+    // Use default value if provided
+    if (param.default !== undefined && param.default !== null) {
+      if (param.type === 'vector' && Array.isArray(param.default)) {
+        // Ensure deep copy for arrays
+        values[param.name] = [...param.default]
+      } else {
+        values[param.name] = param.default
+      }
+      continue
+    }
+
+    // Fallback to zero-values if no default is provided
     switch (param.type) {
       case 'float':
         values[param.name] = 0.0

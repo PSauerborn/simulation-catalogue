@@ -229,7 +229,7 @@ func (db *MockDB) UpdateSimulationRun(clientId string, status string, output []b
 	return fmt.Errorf("simulation run not found")
 }
 
-func (db *MockDB) CreateSimulation(name, description string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error) {
+func (db *MockDB) CreateSimulation(name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error) {
 	id := uuid.New().String()
 	id = strings.ReplaceAll(id, "-", "")
 
@@ -237,6 +237,7 @@ func (db *MockDB) CreateSimulation(name, description string, parameters []Simula
 		Id:          id,
 		Name:        name,
 		Description: description,
+		Model:       model,
 		Parameters:  parameters,
 		Outputs:     outputs,
 	}
