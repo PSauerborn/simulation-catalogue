@@ -23,7 +23,7 @@ func NewRouter(cnt *Controller) *gin.Engine {
 		ExposeHeaders:   []string{"*"},
 	}))
 
-	base := r.Group(fmt.Sprintf("/%s", cnt.config.Version))
+	base := r.Group(fmt.Sprintf("/api/%s", cnt.config.Version))
 
 	// public endpoints that do not require authentication
 	public := base.Group("/public")
