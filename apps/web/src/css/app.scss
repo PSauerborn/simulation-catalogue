@@ -1,0 +1,630 @@
+// ============================================
+// Simulation Catalogue - Apple-Inspired Dark Mode
+// ============================================
+
+// Import Sass modules
+@use 'sass:color';
+
+// Import variables
+@import './quasar.variables.scss';
+
+// ============================================
+// Base Styles
+// ============================================
+
+* {
+  box-sizing: border-box;
+}
+
+// Hide number input spinners (increment/decrement buttons)
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+html,
+body {
+  background-color: $dark-page;
+  color: #f5f5f7;
+  font-family: $typography-font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ============================================
+// Typography
+// ============================================
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $typography-font-family;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f5f5f7;
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 1.1;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+p {
+  color: #a1a1a6;
+  line-height: 1.6;
+}
+
+// ============================================
+// Glass Morphism Components
+// ============================================
+
+.glass-card {
+  background: $glass-bg;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-lg;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.glass-panel {
+  background: rgba(28, 28, 30, 0.8);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-xl;
+}
+
+// ============================================
+// Gradient Accents
+// ============================================
+
+.gradient-text {
+  background: linear-gradient(135deg, $primary 0%, $secondary 50%, $accent 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, $primary, $accent);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+// ============================================
+// Buttons
+// ============================================
+
+.btn-primary {
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: $border-radius-xl;
+  padding: 12px 24px;
+  font-family: $typography-font-family;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: color.adjust($primary, $lightness: 8%);
+    transform: scale(1.02);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btn-secondary {
+  background: transparent;
+  color: $primary;
+  border: 1px solid rgba($primary, 0.5);
+  border-radius: $border-radius-xl;
+  padding: 12px 24px;
+  font-family: $typography-font-family;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    border-color: $primary;
+  }
+}
+
+.btn-icon {
+  background: $glass-bg;
+  border: 1px solid $glass-border;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+  }
+}
+
+// ============================================
+// Form Elements
+// ============================================
+
+.input-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-md;
+  padding: 14px 16px;
+  color: #f5f5f7;
+  font-family: $typography-font-family;
+  font-size: 1rem;
+  width: 100%;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba($primary, 0.2);
+  }
+
+  &::placeholder {
+    color: #636366;
+  }
+}
+
+// ============================================
+// Grid System
+// ============================================
+
+.simulation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  padding: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+}
+
+// ============================================
+// Status Badges
+// ============================================
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &.running {
+    background: rgba($info, 0.15);
+    color: $info;
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: $info;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+  }
+
+  &.completed {
+    background: rgba($positive, 0.15);
+    color: $positive;
+  }
+
+  &.failed {
+    background: rgba($negative, 0.15);
+    color: $negative;
+  }
+
+  &.idle {
+    background: rgba(#a1a1a6, 0.15);
+    color: #a1a1a6;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+// ============================================
+// Animations
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+// ============================================
+// Scrollbar
+// ============================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+// ============================================
+// Quasar Overrides
+// ============================================
+
+.q-page {
+  background: $dark-page;
+}
+
+.q-layout {
+  background: $dark-page;
+}
+
+.q-header {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid $glass-border;
+}
+
+.q-drawer {
+  background: rgba(28, 28, 30, 0.95) !important;
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-right: 1px solid $glass-border !important;
+}
+
+.q-item {
+  border-radius: $border-radius-md;
+  margin: 4px 8px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &.q-router-link--active {
+    background: rgba($primary, 0.15);
+    color: $primary;
+  }
+}
+
+.q-btn {
+  font-family: $typography-font-family;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.q-card {
+  background: $glass-bg;
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-lg;
+}
+
+.q-dialog__inner {
+  & > .q-card {
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid $glass-border;
+    border-radius: $border-radius-xl;
+  }
+}
+
+.q-field {
+  .q-field__control {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: $border-radius-md;
+
+    &::before {
+      border-color: $glass-border;
+    }
+
+    &:hover::before {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &.q-field--focused .q-field__control {
+    &::after {
+      border-color: $primary;
+    }
+  }
+
+  .q-field__label {
+    color: #a1a1a6;
+  }
+
+  input,
+  textarea {
+    color: #f5f5f7;
+  }
+}
+
+.q-table {
+  background: transparent;
+
+  thead tr {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  th {
+    color: #a1a1a6;
+    font-weight: 500;
+    border-bottom: 1px solid $glass-border !important;
+  }
+
+  td {
+    color: #f5f5f7;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+.q-chip {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f7;
+}
+
+.q-tooltip {
+  background: rgba(28, 28, 30, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-sm;
+  font-family: $typography-font-family;
+}
+
+// ============================================
+// Splash Screen
+// ============================================
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: $dark-page;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  .splash-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 32px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .splash-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    animation: fadeIn 1s ease-out 0.3s both;
+  }
+
+  .splash-subtitle {
+    color: #a1a1a6;
+    font-size: 1rem;
+    animation: fadeIn 1s ease-out 0.5s both;
+  }
+
+  .splash-loader {
+    margin-top: 48px;
+    animation: fadeIn 1s ease-out 0.7s both;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// ============================================
+// Parameter Type Badges
+// ============================================
+
+.param-type {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+
+  &.float {
+    background: rgba(#64d2ff, 0.15);
+    color: #64d2ff;
+  }
+
+  &.int {
+    background: rgba(#bf5af2, 0.15);
+    color: #bf5af2;
+  }
+
+  &.string {
+    background: rgba(#30d158, 0.15);
+    color: #30d158;
+  }
+
+  &.bool {
+    background: rgba(#ffd60a, 0.15);
+    color: #ffd60a;
+  }
+
+  &.vector {
+    background: rgba(#ff9f0a, 0.15);
+    color: #ff9f0a;
+  }
+}
+
+// ============================================
+// Chart Container
+// ============================================
+
+.chart-container {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-lg;
+  padding: 24px;
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
+// ============================================
+// Math/Model Display
+// ============================================
+
+.model-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-md;
+  padding: 16px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  font-size: 0.9rem;
+  color: #a1a1a6;
+
+  .math-equation {
+    color: #64d2ff;
+    padding: 8px 0;
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,6 @@
+app:
+  log_level: info
+  port: 8080
+  version: v1
+  max_concurrent_runs: 10
+  cpu_arch: arm64

@@ -1,0 +1,7 @@
+#!/bin/bash
+# Magnetic Field Mapping Binary (Mock)
+# This is a placeholder binary for testing purposes
+echo "Running Magnetic Field Mapping..."
+echo "Parameters: coils=12, resolution=1mm, domain=1m^3"
+echo "Simulation complete."
+exit 0

@@ -1,0 +1,48 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+        exclude: (.*/helm/charts/.*|k8s/.*)
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-json
+
+  - repo: https://github.com/yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args:
+          [
+            "--baseline",
+            ".secrets.baseline",
+            "--exclude-files",
+            ".*/tests/fixtures",
+          ]
+
+  - repo: local
+    hooks:
+      - id: lint
+        name: Run API Formatting & Linting
+        entry: make -C apps/api lint
+        language: system
+        pass_filenames: false
+        files: ^apps/api/
+
+      - id: unittests
+        name: Run API Unit Tests
+        entry: make -C apps/api run-tests
+        language: system
+        pass_filenames: false
+        files: ^apps/api/
+
+  - repo: local
+    hooks:
+      - id: lint
+        name: Run Web Formatting & Linting
+        entry: make -C apps/web lint
+        language: system
+        pass_filenames: false
+        files: ^apps/web/
