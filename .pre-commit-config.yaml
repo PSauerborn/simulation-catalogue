@@ -26,32 +26,32 @@ repos:
     hooks:
       - id: lint
         name: Run API Formatting & Linting
-        entry: make -C apps/api lint
+        entry: make -C api lint
         language: system
         pass_filenames: false
-        files: ^apps/api/
+        files: ^api/
 
       - id: unittests
         name: Run API Unit Tests
-        entry: make -C apps/api run-tests
+        entry: make -C api run-tests
         language: system
         pass_filenames: false
-        files: ^apps/api/
+        files: ^api/
 
   - repo: local
     hooks:
       - id: lint
         name: Run Web Formatting & Linting
-        entry: make -C apps/web lint
+        entry: make -C web lint
         language: system
         pass_filenames: false
-        files: ^apps/web/
+        files: ^web/
 
   - repo: local
     hooks:
       - id: lint
         name: Run TF Formatting & Linting
-        entry: make -C infrastructure/terraform lint
+        entry: make -C terraform lint
         language: system
         pass_filenames: false
-        files: ^infrastructure/terraform/
+        files: ^terraform/
