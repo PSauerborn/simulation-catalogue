@@ -1,0 +1,30 @@
+replicaCount: 1
+
+image:
+  repository: 450876623734.dkr.ecr.us-east-1.amazonaws.com/simulation-catalogue/web
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8080
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8080
+
+ingress:
+  enabled: true
+  tls:
+  - secretName: tls-cert
+    hosts:
+      - simulation-catalogue.s31-software.com
+
+env: {}
+
+secrets: {}

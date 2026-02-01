@@ -22,7 +22,7 @@ func TestGetVersion(t *testing.T) {
 		controller := NewController(cfg, nil, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/version", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/version", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -46,7 +46,7 @@ func TestHealthCheck(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/health", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/health", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -68,7 +68,7 @@ func TestHealthCheck(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/health", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/health", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -92,7 +92,7 @@ func TestGetClient(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/client", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/client", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -118,7 +118,7 @@ func TestGetClient(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/client", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/client", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -142,7 +142,7 @@ func TestInitClient(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/public/client/init", nil)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/public/client/init", nil)
 		response := httptest.NewRecorder()
 
 		assert.Equal(t, 5, len(db.clients))
@@ -176,7 +176,7 @@ func TestListSimulations(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -200,7 +200,7 @@ func TestGetSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/sim001/meta", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/sim001/meta", nil)
 		response := httptest.NewRecorder()
 
 		sim := db.SimulationsById()["sim001"]
@@ -224,7 +224,7 @@ func TestGetSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/not-found/meta", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/not-found/meta", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -242,7 +242,7 @@ func TestGetSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/sim001/binary/amd64", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/sim001/binary/amd64", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -258,7 +258,7 @@ func TestGetSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/not-found/binary", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/not-found/binary", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -274,7 +274,7 @@ func TestGetSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/sim005/binary", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/sim005/binary", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -306,7 +306,7 @@ func TestRunSimulation(t *testing.T) {
 			},
 		})
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/public/simulations/run", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/public/simulations/run", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -348,7 +348,7 @@ func TestRunSimulation(t *testing.T) {
 
 		initial := len(db.simulationRuns)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/public/simulations/run", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/public/simulations/run", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -378,7 +378,7 @@ func TestRunSimulation(t *testing.T) {
 			},
 		})
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/public/simulations/run", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/public/simulations/run", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -410,7 +410,7 @@ func TestRunSimulation(t *testing.T) {
 
 		initial := len(db.simulationRuns)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/public/simulations/run", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/public/simulations/run", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "b2c3d4e5f6789012345678abcdef01a2")
@@ -433,7 +433,7 @@ func TestGetSimulationRun(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/run", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/run", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -465,7 +465,7 @@ func TestGetSimulationRun(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/run", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/run", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "e5f6789012345678abcdef01a2b3c4d5")
@@ -483,7 +483,7 @@ func TestGetSimulationRun(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/run", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/run", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -501,7 +501,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output?format=json", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output?format=json", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -531,7 +531,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output?format=zip", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output?format=zip", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -549,7 +549,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -579,7 +579,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "e5f6789012345678abcdef01a2b3c4d5")
@@ -603,7 +603,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "b2c3d4e5f6789012345678abcdef01a2")
@@ -627,7 +627,7 @@ func TestGetSimulationOutput(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodGet, "/v1/public/simulations/output?format=invalid", nil)
+		request := httptest.NewRequest(http.MethodGet, "/api/v1/public/simulations/output?format=invalid", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-Client-Id", "a1b2c3d4e5f6789012345678abcdef01")
@@ -653,7 +653,7 @@ func TestCreateSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/admin/simulations", nil)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/admin/simulations", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -669,7 +669,7 @@ func TestCreateSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/admin/simulations", nil)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/admin/simulations", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_unknown")
@@ -687,7 +687,7 @@ func TestCreateSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/admin/simulations", nil)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/admin/simulations", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_c3d4e5f6789012345678abcdef01a2b3")
@@ -705,7 +705,7 @@ func TestCreateSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/admin/simulations", nil)
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/admin/simulations", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "a1b2c3d4e5f6789012345678abcdef01")
@@ -754,7 +754,7 @@ func TestCreateSimulation(t *testing.T) {
 		initialSimulationCount := len(db.simulations)
 		assert.Equal(t, 5, initialSimulationCount)
 
-		request := httptest.NewRequest(http.MethodPost, "/v1/admin/simulations", bytes.NewReader(body))
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/admin/simulations", bytes.NewReader(body))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_a1b2c3d4e5f6789012345678abcdef01")
@@ -781,7 +781,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/meta", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -797,7 +797,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/meta", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_unknown")
@@ -815,7 +815,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/meta", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_c3d4e5f6789012345678abcdef01a2b3")
@@ -833,7 +833,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/meta", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "a1b2c3d4e5f6789012345678abcdef01")
@@ -856,7 +856,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 			Description: "Simulate the Bose-Hubbard model",
 		})
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim999/meta", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim999/meta", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_a1b2c3d4e5f6789012345678abcdef01")
@@ -879,7 +879,7 @@ func TestUpdateSimulationMeta(t *testing.T) {
 			Description: "Simulate the Bose-Hubbard model",
 		})
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/meta", bytes.NewReader(encoded))
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", bytes.NewReader(encoded))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_a1b2c3d4e5f6789012345678abcdef01")
@@ -907,7 +907,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/binary/amd64", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/binary/amd64", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -923,7 +923,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/binary/amd64", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/binary/amd64", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_unknown")
@@ -941,7 +941,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/binary/amd64", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/binary/amd64", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_c3d4e5f6789012345678abcdef01a2b3")
@@ -959,7 +959,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/binary/amd64", nil)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/binary/amd64", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "a1b2c3d4e5f6789012345678abcdef01")
@@ -992,7 +992,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 			t.Fatalf("failed to close form: %v", err)
 		}
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim999/binary/amd64", bytes.NewReader(writer.Body.Bytes()))
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim999/binary/amd64", bytes.NewReader(writer.Body.Bytes()))
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_a1b2c3d4e5f6789012345678abcdef01")
@@ -1027,7 +1027,7 @@ func TestUpdateSimulationBinary(t *testing.T) {
 		}
 		multipartWriter.Close()
 
-		request := httptest.NewRequest(http.MethodPut, "/v1/admin/simulations/sim001/binary/amd64", buffer)
+		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/binary/amd64", buffer)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_a1b2c3d4e5f6789012345678abcdef01")
@@ -1048,7 +1048,7 @@ func TestDeleteSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodDelete, "/v1/admin/simulations/sim001", nil)
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/admin/simulations/sim001", nil)
 		response := httptest.NewRecorder()
 
 		router.ServeHTTP(response, request)
@@ -1064,7 +1064,7 @@ func TestDeleteSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodDelete, "/v1/admin/simulations/sim001", nil)
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/admin/simulations/sim001", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_unknown")
@@ -1082,7 +1082,7 @@ func TestDeleteSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodDelete, "/v1/admin/simulations/sim001", nil)
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/admin/simulations/sim001", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "sk_live_c3d4e5f6789012345678abcdef01a2b3")
@@ -1100,7 +1100,7 @@ func TestDeleteSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodDelete, "/v1/admin/simulations/sim001", nil)
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/admin/simulations/sim001", nil)
 		response := httptest.NewRecorder()
 
 		request.Header.Set("X-API-Key", "a1b2c3d4e5f6789012345678abcdef01")
@@ -1118,7 +1118,7 @@ func TestDeleteSimulation(t *testing.T) {
 		controller := NewController(cfg, db, nil)
 		router := NewRouter(controller)
 
-		request := httptest.NewRequest(http.MethodDelete, "/v1/admin/simulations/sim001", nil)
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/admin/simulations/sim001", nil)
 		response := httptest.NewRecorder()
 
 		_, exists := db.SimulationsById()["sim001"]
