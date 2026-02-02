@@ -405,7 +405,7 @@ func (p *PostgresDB) UpdateSimulationBinary(simId, cpuArch string, binary []byte
 
 // DeleteSimulation permanently removes a simulation and all associated data.
 func (p *PostgresDB) DeleteSimulation(id string) error {
-	query := "DELETE FROM base.simulation_meta WHERE id = $1 CASCADE"
+	query := "DELETE FROM base.simulation_meta WHERE id = $1"
 
 	_, err := p.pool.Exec(
 		context.Background(),

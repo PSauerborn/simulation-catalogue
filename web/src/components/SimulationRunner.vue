@@ -373,7 +373,9 @@ function startPolling() {
       const statusData = response.data
       simulationStore.setCurrentRun(statusData)
 
-      if (statusData.status !== 'running') {
+      const runningStatuses = ['running', 'queued']
+
+      if (!runningStatuses.includes(statusData.status)) {
         stopPolling()
         simulationStore.setIsRunning(false)
 

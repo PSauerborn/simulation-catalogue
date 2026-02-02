@@ -12,7 +12,7 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // Getters
   const hasActiveRun = computed(
-    () => currentRun.value !== null && currentRun.value.status === 'running',
+    () => currentRun.value !== null && ['running', 'queued'].includes(currentRun.value.status),
   )
   const canRun = computed(() => !isRunning.value && !hasActiveRun.value)
 
