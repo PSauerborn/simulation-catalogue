@@ -190,6 +190,8 @@ func (cnt *Controller) GetSimulationRun(c *gin.Context) JSONResponse {
 			"error": "Internal Server Error",
 		}}
 	}
+	run.Output = nil
+
 	return JSONResponse{Code: http.StatusOK, Body: run}
 }
 
@@ -264,7 +266,7 @@ func (cnt *Controller) GetSimulationOutput(c *gin.Context) {
 
 		jsonFiles := make(map[string][]map[string]interface{})
 		for name, file := range csvFiles {
-			jsonFiles[name], err = CSVFileToJson(file)
+			records, err := CSVFileToJson(file)
 			if err != nil {
 				log.WithError(err).Error("failed to parse CSV file")
 				c.JSON(http.StatusInternalServerError, gin.H{
@@ -272,6 +274,8 @@ func (cnt *Controller) GetSimulationOutput(c *gin.Context) {
 				})
 				return
 			}
+
+			jsonFiles[name] = DownSampleDataset(records)
 		}
 
 		log.WithFields(log.Fields{

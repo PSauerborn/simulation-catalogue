@@ -153,3 +153,21 @@ func ZipDirectory(source string) ([]byte, error) {
 
 	return buf.Bytes(), nil
 }
+
+func DownSampleDataset(records []map[string]interface{}) []map[string]interface{} {
+	const maxRecords = 10000
+
+	if len(records) <= maxRecords {
+		return records
+	}
+
+	downsampled := make([]map[string]interface{}, maxRecords)
+	total := len(records)
+
+	for i := 0; i < maxRecords; i++ {
+		index := int(float64(i) * float64(total) / float64(maxRecords))
+		downsampled[i] = records[index]
+	}
+
+	return downsampled
+}

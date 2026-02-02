@@ -62,3 +62,34 @@ func TestZipDirectory(t *testing.T) {
 	assert.True(t, foundFiles["file1.txt"])
 	assert.True(t, foundFiles["file2.txt"])
 }
+
+func TestDownSampleDataset(t *testing.T) {
+	t.Run("small dataset", func(t *testing.T) {
+		// Case 1: Small dataset
+		smallData := make([]map[string]interface{}, 100)
+		for i := 0; i < 100; i++ {
+			smallData[i] = map[string]interface{}{"id": i}
+		}
+		result := DownSampleDataset(smallData)
+		assert.Equal(t, len(smallData), len(result))
+		assert.Equal(t, smallData[0]["id"], result[0]["id"])
+	})
+
+	t.Run("large dataset", func(t *testing.T) {
+		// Case 2: Large dataset
+		largeSize := 20000
+		largeData := make([]map[string]interface{}, largeSize)
+		for i := 0; i < largeSize; i++ {
+			largeData[i] = map[string]interface{}{"id": i}
+		}
+		result := DownSampleDataset(largeData)
+		assert.Equal(t, 10000, len(result))
+
+		// Check sampling logic for 2x downsample
+		// index 0 -> 0
+		// index 1 -> 2
+		assert.Equal(t, 0, result[0]["id"])
+		assert.Equal(t, 2, result[1]["id"])
+		assert.Equal(t, 19998, result[9999]["id"])
+	})
+}

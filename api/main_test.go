@@ -442,6 +442,7 @@ func TestGetSimulationRun(t *testing.T) {
 		assert.Equal(t, 1, len(runs))
 
 		run := runs[0]
+		run.Output = nil
 
 		router.ServeHTTP(response, request)
 		assert.Equal(t, http.StatusOK, response.Code)

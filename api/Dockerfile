@@ -23,9 +23,14 @@ COPY *.go ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o api .
 
-FROM gcr.io/distroless/static:nonroot AS runtime
+FROM debian:bookworm-slim AS runtime
 
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    libgfortran5 \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/api .
 

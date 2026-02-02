@@ -233,6 +233,12 @@ func (r *SimulationRunner) ProcessEvent(event SimulationRunEvent) ([]byte, error
 		return nil, err
 	}
 
+	log.WithFields(log.Fields{
+		"client_id":  event.ClientId,
+		"cpu_arch":   r.config.CPUArch,
+		"simulation": event.SimulationId,
+	}).Info("fetching simulation binary")
+
 	binary, err := r.db.GetSimulationBinary(event.SimulationId, r.config.CPUArch)
 	if err != nil {
 		log.WithError(err).WithFields(log.Fields{
@@ -258,6 +264,12 @@ func (r *SimulationRunner) ProcessEvent(event SimulationRunEvent) ([]byte, error
 		return nil, err
 	}
 	defer logFile.Close()
+
+	log.WithFields(log.Fields{
+		"config_path": tmpDir.ConfigPath,
+		"binary_path": filepath.Join(tmpDir.RootDir, "simulation"),
+		"output_dir":  tmpDir.OutputDir,
+	}).Info("running simulation")
 
 	// execute binary. set config path as argument. output to stderr
 	cmd := exec.Command(filepath.Join(tmpDir.RootDir, "simulation"), tmpDir.ConfigPath)

@@ -1,0 +1,56 @@
+{
+  "name": "Helical Particle Motion",
+  "description": "Simulates the helical motion of a charged particle in a uniform magnetic field subject to gravity. The particle follows a helical trajectory as it experiences the Lorentz force perpendicular to both its velocity and the magnetic field. Gravity causes a drift velocity perpendicular to both the magnetic field and the direction of gravity.",
+  "model": "\\begin{align} m\\ddot{\\mathbf{x}} &= q(\\dot{\\mathbf{x}} \\times \\mathbf{B}) + m\\mathbf{g} \\\\ \\omega_c &= \\frac{qB}{m} \\\\ \\mathbf{v}_d &= \\frac{m\\mathbf{g} \\times \\mathbf{B}}{qB^2} \\end{align}",
+  "parameters": [
+    {
+      "name": "magnetic_field",
+      "description": "Magnetic field strength in Tesla (T).",
+      "type": "vector",
+      "default": [0.25, 0.0, 0.0]
+    },
+    {
+      "name": "charge",
+      "description": "Particle charge in Coulombs (C).",
+      "type": "float",
+      "default": 0.5
+    },
+    {
+      "name": "mass",
+      "description": "Particle mass in kilograms (kg).",
+      "type": "float",
+      "default": 0.5
+    },
+    {
+      "name": "initial_velocity",
+      "description": "Initial velocity vector",
+      "type": "vector",
+      "default": [1.0, 5.0, 2.0]
+    },
+    {
+      "name": "initial_position",
+      "description": "Initial position vector",
+      "type": "vector",
+      "default": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "delta_t",
+      "description": "Time step size in seconds",
+      "type": "float",
+      "default": 0.001
+    },
+    {
+      "name": "num_steps",
+      "description": "Number of simulation timesteps to compute",
+      "type": "int",
+      "default": 50000
+    }
+  ],
+  "outputs": [
+    {
+      "name": "particle_trajectory",
+      "description": "3D trajectory of the particle over time, containing position (x1, x2, x3) at each timestep",
+      "type": "trajectory"
+    }
+  ]
+}
