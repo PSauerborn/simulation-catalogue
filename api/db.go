@@ -40,8 +40,8 @@ type Persistence interface {
 
 	// CreateSimulation creates a new simulation with the provided metadata.
 	CreateSimulation(name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) (string, error)
-	// UpdateSimulationMeta updates the name and description of a simulation.
-	UpdateSimulationMeta(id string, name, description string) error
+	// UpdateSimulationMeta updates the name, description, model, parameters, and outputs of a simulation.
+	UpdateSimulationMeta(id string, name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) error
 	// UpdateSimulationBinary uploads or updates a simulation binary for a CPU architecture.
 	UpdateSimulationBinary(simId, cpuArch string, binary []byte) error
 	// DeleteSimulation removes a simulation and all associated data.
@@ -367,15 +367,18 @@ func (p *PostgresDB) CreateSimulation(name, description, model string, parameter
 	return id, nil
 }
 
-// UpdateSimulationMeta updates the name and description of an existing simulation.
-func (p *PostgresDB) UpdateSimulationMeta(id string, name, description string) error {
-	query := "UPDATE base.simulation_meta SET name = $1, description = $2, updated_at = $3 WHERE id = $4"
+// UpdateSimulationMeta updates the name, description, model, parameters, and outputs of an existing simulation.
+func (p *PostgresDB) UpdateSimulationMeta(id string, name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) error {
+	query := "UPDATE base.simulation_meta SET name = $1, description = $2, model = $3, parameters = $4, outputs = $5, updated_at = $6 WHERE id = $7"
 
 	_, err := p.pool.Exec(
 		context.Background(),
 		query,
 		name,
 		description,
+		model,
+		parameters,
+		outputs,
 		time.Now().UTC(),
 		id,
 	)

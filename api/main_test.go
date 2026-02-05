@@ -855,6 +855,9 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		encoded, _ := json.Marshal(PatchSimulationRequest{
 			Name:        "Bose Hubbard Model",
 			Description: "Simulate the Bose-Hubbard model",
+			Model:       "bose_hubbard",
+			Parameters:  []SimulationParameter{},
+			Outputs:     []SimulationOutput{},
 		})
 
 		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim999/meta", bytes.NewReader(encoded))
@@ -878,6 +881,21 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		encoded, _ := json.Marshal(PatchSimulationRequest{
 			Name:        "Bose Hubbard Model",
 			Description: "Simulate the Bose-Hubbard model",
+			Model:       "bose_hubbard with latex: $\\alpha$",
+			Parameters: []SimulationParameter{
+				{
+					Name:        "U",
+					Description: "Interaction strength",
+					Type:        SimulationParameterTypeFloat,
+				},
+			},
+			Outputs: []SimulationOutput{
+				{
+					Name:        "density",
+					Description: "Density profile",
+					Type:        OutputTypeTrajectory,
+				},
+			},
 		})
 
 		request := httptest.NewRequest(http.MethodPut, "/api/v1/admin/simulations/sim001/meta", bytes.NewReader(encoded))
@@ -895,6 +913,11 @@ func TestUpdateSimulationMeta(t *testing.T) {
 		updated := db.SimulationsById()["sim001"]
 		assert.Equal(t, "Bose Hubbard Model", updated.Name)
 		assert.Equal(t, "Simulate the Bose-Hubbard model", updated.Description)
+		assert.Equal(t, "bose_hubbard with latex: $\\alpha$", updated.Model)
+		assert.Equal(t, 1, len(updated.Parameters))
+		assert.Equal(t, "U", updated.Parameters[0].Name)
+		assert.Equal(t, 1, len(updated.Outputs))
+		assert.Equal(t, "density", updated.Outputs[0].Name)
 	})
 }
 

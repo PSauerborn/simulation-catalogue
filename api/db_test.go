@@ -245,13 +245,18 @@ func (db *MockDB) CreateSimulation(name, description, model string, parameters [
 	return id, nil
 }
 
-func (db *MockDB) UpdateSimulationMeta(id string, name, description string) error {
+func (db *MockDB) UpdateSimulationMeta(id string, name, description, model string, parameters []SimulationParameter, outputs []SimulationOutput) error {
 	for i, simulation := range db.simulations {
 		if simulation.Id == id {
 			db.simulations[i] = SimulationMeta{
 				Id:          id,
 				Name:        name,
 				Description: description,
+				Model:       model,
+				Parameters:  parameters,
+				Outputs:     outputs,
+				CreatedAt:   simulation.CreatedAt,
+				UpdatedAt:   simulation.UpdatedAt,
 			}
 			return nil
 		}

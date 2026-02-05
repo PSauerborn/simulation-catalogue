@@ -94,6 +94,9 @@ type NewSimulationRequest struct {
 
 // PatchSimulationRequest is the request body for updating simulation metadata.
 type PatchSimulationRequest struct {
-	Name        string `json:"name" validate:"required"`
-	Description string `json:"description" validate:"required"`
+	Name        string                `json:"name" validate:"required"`
+	Description string                `json:"description" validate:"required"`
+	Model       string                `json:"model" validate:"required"`
+	Parameters  []SimulationParameter `json:"parameters" validate:"required"`
+	Outputs     []SimulationOutput    `json:"outputs" validate:"required"`
 }

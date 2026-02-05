@@ -460,7 +460,7 @@ func (cnt *Controller) UpdateSimulationMeta(c *gin.Context) JSONResponse {
 		}}
 	}
 
-	err = cnt.db.UpdateSimulationMeta(simId, body.Name, body.Description)
+	err = cnt.db.UpdateSimulationMeta(simId, body.Name, body.Description, body.Model, body.Parameters, body.Outputs)
 	if err != nil {
 		log.WithError(err).Error("failed to update simulation meta")
 		return JSONResponse{Code: http.StatusInternalServerError, Body: gin.H{

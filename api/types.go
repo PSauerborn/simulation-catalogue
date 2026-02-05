@@ -112,8 +112,11 @@ type NewSimulationRequest struct {
 
 // PatchSimulationRequest is the request body for updating simulation metadata.
 type PatchSimulationRequest struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"required"`
+	Name        string                `json:"name" binding:"required"`
+	Description string                `json:"description" binding:"required"`
+	Model       string                `json:"model" binding:"required"`
+	Parameters  []SimulationParameter `json:"parameters" binding:"required"`
+	Outputs     []SimulationOutput    `json:"outputs" binding:"required"`
 }
 
 // RunSimulationRequest is the request body for initiating a simulation run.

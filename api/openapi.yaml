@@ -322,7 +322,7 @@ paths:
       tags:
         - Admin
       summary: Update simulation metadata
-      description: Updates the name and description of an existing simulation
+      description: Updates the name, description, model, parameters, and outputs of an existing simulation
       operationId: updateSimulationMeta
       security:
         - ApiKeyAuth: []
@@ -612,6 +612,9 @@ components:
       required:
         - name
         - description
+        - model
+        - parameters
+        - outputs
       properties:
         name:
           type: string
@@ -619,6 +622,17 @@ components:
         description:
           type: string
           description: Updated simulation description
+        model:
+          type: string
+          description: LaTeX representation of the mathematical model
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationParameter"
+        outputs:
+          type: array
+          items:
+            $ref: "#/components/schemas/SimulationOutput"
 
     Error:
       type: object
