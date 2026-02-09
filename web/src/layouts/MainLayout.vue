@@ -14,32 +14,49 @@
         />
 
         <q-toolbar-title class="toolbar-title">
-          <router-link to="/catalogue" class="logo-link">
-            <span class="logo-text">Simulation <span class="gradient-text">Catalogue</span></span>
+          <router-link to="/simulations" class="logo-link">
+            <span class="logo-text">Simulation <span class="gradient-text">Simulations</span></span>
           </router-link>
         </q-toolbar-title>
 
+        <!-- Centered Text Links -->
+        <div class="gt-sm header-center">
+          <q-btn flat no-caps label="Simulations" to="/simulations" class="header-text-btn" />
+          <q-btn flat no-caps label="Blog" to="/blog" class="header-text-btn" />
+        </div>
+
         <q-space />
 
-        <!-- Desktop Links -->
-        <div class="gt-sm row q-gutter-sm q-mr-md">
-          <q-btn
-            flat
-            round
-            icon="eva-github-outline"
-            href="https://github.com/psauerborn/simulation-catalogue"
-            target="_blank"
-          >
-            <q-tooltip>App Source Code</q-tooltip>
-          </q-btn>
-          <q-btn
-            flat
-            round
-            icon="eva-cube-outline"
-            href="https://github.com/psauerborn/simulations"
-            target="_blank"
-          >
-            <q-tooltip>Simulation Source Code</q-tooltip>
+        <!-- Right Icons -->
+        <div class="gt-sm row items-center no-wrap q-gutter-sm">
+          <q-btn class="q-mr-lg" flat round icon="eva-github-outline">
+            <q-tooltip>Source Code</q-tooltip>
+            <q-menu class="github-menu">
+              <q-list dense style="min-width: 200px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  href="https://github.com/psauerborn/simulation-catalogue"
+                  target="_blank"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="eva-code-outline" size="20px" />
+                  </q-item-section>
+                  <q-item-section>App Source Code</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  href="https://github.com/psauerborn/simulations"
+                  target="_blank"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="eva-cube-outline" size="20px" />
+                  </q-item-section>
+                  <q-item-section>Simulation Source Code</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
 
@@ -48,11 +65,6 @@
           <div class="status-dot"></div>
           <span class="status-text gt-sm">Connected</span>
         </div>
-
-        <!-- Client Info -->
-        <q-btn flat round icon="eva-person-outline" class="gt-sm">
-          <q-tooltip>Client: {{ clientIdShort }}</q-tooltip>
-        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -61,11 +73,18 @@
       <q-list padding>
         <q-item-label header class="drawer-header"> Navigation </q-item-label>
 
-        <q-item clickable v-ripple to="/catalogue" active-class="nav-active">
+        <q-item clickable v-ripple to="/simulations" active-class="nav-active">
           <q-item-section avatar>
             <q-icon name="eva-grid-outline" />
           </q-item-section>
           <q-item-section>Catalogue</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/blog" active-class="nav-active">
+          <q-item-section avatar>
+            <q-icon name="eva-file-text-outline" />
+          </q-item-section>
+          <q-item-section>Blog</q-item-section>
         </q-item>
 
         <q-separator spaced dark />
@@ -129,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useClientStore } from 'stores/client-store'
 import { storeToRefs } from 'pinia'
 
@@ -137,10 +156,6 @@ const clientStore = useClientStore()
 const { clientId } = storeToRefs(clientStore)
 
 const drawerOpen = ref(false)
-
-const clientIdShort = computed(() => {
-  return clientId.value ? `${clientId.value.substring(0, 8)}...` : 'Unknown'
-})
 
 function toggleDrawer() {
   drawerOpen.value = !drawerOpen.value
@@ -155,6 +170,34 @@ function toggleDrawer() {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid $glass-border;
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+}
+
+.header-text-btn {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #a1a1a6;
+  letter-spacing: 0.01em;
+
+  &.q-btn--active,
+  &:hover {
+    color: #f5f5f7;
+  }
+}
+
+.github-menu {
+  background: rgba(28, 28, 30, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid $glass-border;
+  border-radius: $border-radius-md;
 }
 
 .toolbar-title {

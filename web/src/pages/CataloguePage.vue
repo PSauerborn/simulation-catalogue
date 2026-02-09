@@ -101,12 +101,55 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useMeta } from 'quasar'
 import { useSimulationStore } from 'stores/simulation-store'
 import { storeToRefs } from 'pinia'
 import SimulationCard from 'components/SimulationCard.vue'
 import SimulationRunner from 'components/SimulationRunner.vue'
 import ResultsViewer from 'components/ResultsViewer.vue'
 import { fetchSimulations } from 'src/api'
+
+// SEO Meta Tags
+useMeta({
+  title: 'Physics Simulations',
+  titleTemplate: (title) => `${title} | Simulation Catalogue`,
+  meta: {
+    description: {
+      name: 'description',
+      content:
+        'Browse and run interactive Fortran-powered physics simulations. Explore charged particle dynamics in magnetic, electric, and gravitational fields.',
+    },
+    keywords: {
+      name: 'keywords',
+      content:
+        'physics simulations, fortran simulations, particle dynamics, magnetic field, computational physics, interactive simulations',
+    },
+    // Open Graph
+    ogTitle: { property: 'og:title', content: 'Physics Simulations | Simulation Catalogue' },
+    ogDescription: {
+      property: 'og:description',
+      content: 'Browse and run interactive Fortran-powered physics simulations.',
+    },
+    ogType: { property: 'og:type', content: 'website' },
+    ogUrl: {
+      property: 'og:url',
+      content: 'https://simulation-catalogue.s31-software.com/simulations',
+    },
+    // Twitter Card
+    twitterCard: { name: 'twitter:card', content: 'summary' },
+    twitterTitle: { name: 'twitter:title', content: 'Physics Simulations | Simulation Catalogue' },
+    twitterDescription: {
+      name: 'twitter:description',
+      content: 'Browse and run interactive Fortran-powered physics simulations.',
+    },
+  },
+  link: {
+    canonical: {
+      rel: 'canonical',
+      href: 'https://simulation-catalogue.s31-software.com/simulations',
+    },
+  },
+})
 
 const simulationStore = useSimulationStore()
 
