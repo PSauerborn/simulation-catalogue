@@ -7,12 +7,28 @@ const routes = [
 
   // Main catalogue with layout
   {
-    path: '/catalogue',
+    path: '/simulations',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: '',
         component: () => import('pages/CataloguePage.vue'),
+      },
+    ],
+  },
+
+  // Blog
+  {
+    path: '/blog',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/BlogPage.vue'),
+      },
+      {
+        path: ':slug',
+        component: () => import('pages/BlogArticlePage.vue'),
       },
     ],
   },

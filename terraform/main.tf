@@ -49,7 +49,7 @@ module "web" {
   web_subdomain = local.web_subdomain
 
   image_tags = {
-    web = "0.1.0"
+    web = "0.2.0"
   }
 }
 

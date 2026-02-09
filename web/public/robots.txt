@@ -1,0 +1,13 @@
+# Robots.txt for Simulation Catalogue
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://simulation-catalogue.s31-software.com/sitemap.xml
+
+# Disallow crawling of API endpoints and internal paths
+Disallow: /api/
+Disallow: /_nuxt/
+Disallow: /.quasar/

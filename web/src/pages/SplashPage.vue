@@ -41,9 +41,54 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMeta } from 'quasar'
 import { useClientStore } from 'stores/client-store'
 import { useSimulationStore } from 'stores/simulation-store'
 import { initializeClient, fetchClient, fetchSimulations } from 'src/api'
+
+// SEO Meta Tags
+useMeta({
+  title: 'Simulation Catalogue - Fortran Physics Simulations',
+  titleTemplate: (title) => title,
+  meta: {
+    description: {
+      name: 'description',
+      content:
+        'Explore and run Fortran-powered physics simulations. Interactive charged particle simulations in magnetic, electric, and gravitational fields.',
+    },
+    keywords: {
+      name: 'keywords',
+      content:
+        'physics simulations, fortran, particle dynamics, magnetic field, electric field, computational physics, boris pusher, velocity verlet',
+    },
+    // Open Graph
+    ogTitle: {
+      property: 'og:title',
+      content: 'Simulation Catalogue - Fortran Physics Simulations',
+    },
+    ogDescription: {
+      property: 'og:description',
+      content:
+        'Explore and run Fortran-powered physics simulations. Interactive charged particle simulations.',
+    },
+    ogType: { property: 'og:type', content: 'website' },
+    ogUrl: { property: 'og:url', content: 'https://simulation-catalogue.s31-software.com/' },
+    ogSiteName: { property: 'og:site_name', content: 'Simulation Catalogue' },
+    // Twitter Card
+    twitterCard: { name: 'twitter:card', content: 'summary_large_image' },
+    twitterTitle: {
+      name: 'twitter:title',
+      content: 'Simulation Catalogue - Fortran Physics Simulations',
+    },
+    twitterDescription: {
+      name: 'twitter:description',
+      content: 'Explore and run Fortran-powered physics simulations.',
+    },
+  },
+  link: {
+    canonical: { rel: 'canonical', href: 'https://simulation-catalogue.s31-software.com/' },
+  },
+})
 
 const router = useRouter()
 const clientStore = useClientStore()
@@ -75,7 +120,7 @@ async function initializeApp() {
     await new Promise((resolve) => setTimeout(resolve, 800))
 
     // Navigate to catalogue
-    router.replace('/catalogue')
+    router.replace('/simulations')
   } catch (err) {
     console.error('Initialization error:', err)
     error.value = err.message || 'Failed to initialize application'

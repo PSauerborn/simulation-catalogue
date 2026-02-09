@@ -35,3 +35,6 @@ mock/
 .DS_Store
 
 .vscode
+
+CLAUDE.md
+.claude
